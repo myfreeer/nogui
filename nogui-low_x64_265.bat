@@ -3,7 +3,7 @@ title Nogui
 setlocal EnableExtensions
 setlocal EnableDelayedExpansion
 color 1f
-if [%1]==[] echo ĞèÒª°ÑÆ¬Ô´»òÕßAVSÍÏµ½EXEÎÄ¼şÉÏ&&goto :end
+if [%1]==[] echo éœ€è¦æŠŠç‰‡æºæˆ–è€…AVSæ‹–åˆ°EXEæ–‡ä»¶ä¸Š&&goto :end
 
 
 :BeginDateAndTime
@@ -32,7 +32,7 @@ if %Hour% LSS 10 set Hour=0%Hour%
 if %Second% LSS 10 set Second=0%Second%
 set StartTimestamp=%Hour%:%Minute%:%Second% %ampm%
 SET StartTimestamp1=%time:~0,2%:%time:~3,2%:%Second%
-echo ½ø³Ì¿ªÊ¼ÓÚ %startdate% // %StartTimestamp% -- %StartTimestamp1% //
+echo è¿›ç¨‹å¼€å§‹äº %startdate% // %StartTimestamp% -- %StartTimestamp1% //
 
 CD /D "%~dp0"
 pushd "%~dp0"
@@ -54,7 +54,7 @@ REM slower
 REM veryslow
 REM placebo
 
-HandBrakeCLI_x64.exe -i "%~1" -o "%~dpn1_hevc.mp4" -f mp4 --detelecine --decomb --crop 0:0:0:0 -e x265 -q 28 -a none --vfr --encoder-preset=fast --verbose=1
+HandBrakeCLI_x64.exe -i "%~1" -o "%~dpn1_hevc.mp4" -f mp4 --detelecine --decomb --crop 0:0:0:0 -e x265 -q 31 -a none --vfr --encoder-preset=fast --verbose=1
 REM -q crf{0-51}
 echo.
 
@@ -106,17 +106,17 @@ if %Second% LSS 10 set Second=0%Second%
 set EndTimestamp=%Hour%:%Minute%:%Second% %ampm%
 SET EndTimestamp1=%time:~0,2%:%time:~3,2%:%Second%
 echo:
-echo ½ø³ÌÍê³ÉÓÚ %date% // %EndTimestamp% -- %EndTimestamp1% //
+echo è¿›ç¨‹å®Œæˆäº %date% // %EndTimestamp% -- %EndTimestamp1% //
 IF %mins% GEQ 1 (
 goto :WithMinutes
 ) else ( 
 goto :WithoutMinutes
 )
 :WithMinutes
-echo ½ø³ÌºÄÊ± %mins%·ÖÖÓ%secs%Ãë£¨¹²¼Æ%totalsecs%Ãë£©¡£
+echo è¿›ç¨‹è€—æ—¶ %mins%åˆ†é’Ÿ%secs%ç§’ï¼ˆå…±è®¡%totalsecs%ç§’ï¼‰ã€‚
 goto :End
 :WithoutMinutes
-echo ½ø³ÌºÄÊ± %totalsecs% Ãë¡£
+echo è¿›ç¨‹è€—æ—¶ %totalsecs% ç§’ã€‚
 :End
 pause
 exit
