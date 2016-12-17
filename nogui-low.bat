@@ -36,6 +36,8 @@ echo 进程开始于 %startdate% // %StartTimestamp% -- %StartTimestamp1% //
 
 CD /D "%~dp0"
 pushd "%~dp0"
+
+:Main
 if exist "%~dpn1_crf.mkv" ren "%~dpn1_crf.mkv" "%~dpn1_crf%RANDOM%.mkv"
 if exist "%~dpn1_crf.mp4" ren "%~dpn1_crf.mp4" "%~dpn1_crf%RANDOM%.mp4"
 if exist "%~dpn1_aac.m4a" ren "%~dpn1_aac.m4a" "%~dpn1_aac%RANDOM%.m4a"
@@ -50,6 +52,9 @@ mkvmerge.exe -o "%~dpn1_crf.mkv" "%~dpn1_crf.mp4" "%~dpn1_aac.m4a"
 del /f /q "%~dpn1_aac.m4a"
 del /f /q "%~dpn1_crf.mp4"
 echo.
+shift /1
+if [%1] == [] goto :EndDateAndTime
+if exist %1 goto :Main
 
 :EndDateAndTime
 set end=%time%

@@ -39,18 +39,20 @@ pushd "%~dp0"
 
 :Main
 if exist "%~dpn1_crf.mkv" ren "%~dpn1_crf.mkv" "%~dpn1_crf%RANDOM%.mkv"
-if exist "%~dpn1_crf.mp4" ren "%~dpn1_crf.mp4" "%~dpn1_crf%RANDOM%.mp4"
+if exist "%~dpn1_crf.264" ren "%~dpn1_crf.264" "%~dpn1_crf%RANDOM%.mp4"
 if exist "%~dpn1_aac.m4a" ren "%~dpn1_aac.m4a" "%~dpn1_aac%RANDOM%.m4a"
-ffmpeg -i "%~1" -f wav - | neroaacenc -q 0.4 -ignorelength -if - -of "%~dpn1_aac.m4a"
+ffmpeg -i "%~1" -f wav - | neroaacenc -q 0.1 -ignorelength -if - -of "%~dpn1_aac.m4a"
 echo.
 
-x264.exe --crf 22 --preset 8 -f -3:-3 -r 16 -b 16 -o "%~dpn1_crf.mp4" "%~1"
+x264_64.exe --crf 40 --preset 5 --fps 30 -o "%~dpn1_crf.264" "%~1"
 echo.
 
 :Clean
-mkvmerge.exe -o "%~dpn1_crf.mkv" "%~dpn1_crf.mp4" "%~dpn1_aac.m4a"
+mkvmerge.exe -o "%~dpn1_crf.mkv" "%~dpn1_crf.264" "%~dpn1_aac.m4a"
+if exist "%~dpn1_crf.mkv" (
 del /f /q "%~dpn1_aac.m4a"
-del /f /q "%~dpn1_crf.mp4"
+del /f /q "%~dpn1_crf.264"
+)
 echo.
 shift /1
 if [%1] == [] goto :EndDateAndTime

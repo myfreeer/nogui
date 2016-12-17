@@ -36,6 +36,8 @@ echo 进程开始于 %startdate% // %StartTimestamp% -- %StartTimestamp1% //
 
 CD /D "%~dp0"
 pushd "%~dp0"
+
+:Main
 if exist "%~dpn1_crf.mkv" move "%~dpn1_crf.mkv" "%~dpn1_crf%RANDOM%.mkv"
 if exist "%~dpn1_crf.hevc" move "%~dpn1_crf.hevc" "%~dpn1_crf%RANDOM%.mp4"
 if exist "%~dpn1_aac.m4a" move "%~dpn1_aac.m4a" "%~dpn1_aac%RANDOM%.m4a"
@@ -65,6 +67,9 @@ del /f /q "%~dpn1_aac.m4a"
 del /f /q "%~dpn1_hevc.mp4"
 )
 echo.
+shift /1
+if [%1] == [] goto :EndDateAndTime
+if exist %1 goto :Main
 
 :EndDateAndTime
 set end=%time%
