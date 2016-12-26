@@ -3,7 +3,7 @@ title Nogui
 setlocal EnableExtensions
 setlocal EnableDelayedExpansion
 color 1f
-if [%1]==[] echo éœ€è¦æŠŠç‰‡æºæˆ–è€…AVSæ‹–åˆ°EXEæ–‡ä»¶ä¸Š&&goto :end
+if [%1]==[] echo ĞèÒª°ÑÆ¬Ô´»òÕßAVSÍÏµ½EXEÎÄ¼şÉÏ&&goto :end
 
 
 :BeginDateAndTime
@@ -32,15 +32,17 @@ if %Hour% LSS 10 set Hour=0%Hour%
 if %Second% LSS 10 set Second=0%Second%
 set StartTimestamp=%Hour%:%Minute%:%Second% %ampm%
 SET StartTimestamp1=%time:~0,2%:%time:~3,2%:%Second%
-echo è¿›ç¨‹å¼€å§‹äº %startdate% // %StartTimestamp% -- %StartTimestamp1% //
+echo ½ø³Ì¿ªÊ¼ÓÚ %startdate% // %StartTimestamp% -- %StartTimestamp1% //
 
 CD /D "%~dp0"
 pushd "%~dp0"
+
+:Main
 if exist "%~dpn1_crf.mkv" move "%~dpn1_crf.mkv" "%~dpn1_crf%RANDOM%.mkv"
 if exist "%~dpn1_crf.hevc" move "%~dpn1_crf.hevc" "%~dpn1_crf%RANDOM%.mp4"
 if exist "%~dpn1_aac.m4a" move "%~dpn1_aac.m4a" "%~dpn1_aac%RANDOM%.m4a"
 echo.
-ffmpeg_64 -i "%~1" -f wav - | neroaacenc -q 0.1 -ignorelength -if - -of "%~dpn1_aac.m4a"
+ffmpeg_64 -hide_banner -i "%~1" -c:a pcm_f32le -f wav - | neroaacenc -q 0.1 -ignorelength -if - -of "%~dpn1_aac.m4a"
 
 REM Available --encoder-preset values for 'x265' encoder:
 REM ultrafast
@@ -54,7 +56,7 @@ REM slower
 REM veryslow
 REM placebo
 
-HandBrakeCLI_x64.exe -i "%~1" -o "%~dpn1_hevc.mp4" -f mp4 --detelecine --decomb --crop 0:0:0:0 -e x265 -q 31 -a none --vfr --encoder-preset=fast --verbose=1
+HandBrakeCLI_x64.exe -i "%~1" -o "%~dpn1_hevc.mp4" -f mp4 --detelecine --decomb --crop 0:0:0:0 -e x265 -q 28 -a none --vfr --encoder-preset=fast --verbose=1
 REM -q crf{0-51}
 echo.
 
@@ -65,6 +67,9 @@ del /f /q "%~dpn1_aac.m4a"
 del /f /q "%~dpn1_hevc.mp4"
 )
 echo.
+shift /1
+if [%1] == [] goto :EndDateAndTime
+if exist %1 goto :Main
 
 :EndDateAndTime
 set end=%time%
@@ -106,17 +111,17 @@ if %Second% LSS 10 set Second=0%Second%
 set EndTimestamp=%Hour%:%Minute%:%Second% %ampm%
 SET EndTimestamp1=%time:~0,2%:%time:~3,2%:%Second%
 echo:
-echo è¿›ç¨‹å®Œæˆäº %date% // %EndTimestamp% -- %EndTimestamp1% //
+echo ½ø³ÌÍê³ÉÓÚ %date% // %EndTimestamp% -- %EndTimestamp1% //
 IF %mins% GEQ 1 (
 goto :WithMinutes
 ) else ( 
 goto :WithoutMinutes
 )
 :WithMinutes
-echo è¿›ç¨‹è€—æ—¶ %mins%åˆ†é’Ÿ%secs%ç§’ï¼ˆå…±è®¡%totalsecs%ç§’ï¼‰ã€‚
+echo ½ø³ÌºÄÊ± %mins%·ÖÖÓ%secs%Ãë£¨¹²¼Æ%totalsecs%Ãë£©¡£
 goto :End
 :WithoutMinutes
-echo è¿›ç¨‹è€—æ—¶ %totalsecs% ç§’ã€‚
+echo ½ø³ÌºÄÊ± %totalsecs% Ãë¡£
 :End
 pause
 exit

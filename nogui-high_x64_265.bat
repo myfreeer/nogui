@@ -42,7 +42,7 @@ if exist "%~dpn1_crf.mkv" move "%~dpn1_crf.mkv" "%~dpn1_crf%RANDOM%.mkv"
 if exist "%~dpn1_crf.hevc" move "%~dpn1_crf.hevc" "%~dpn1_crf%RANDOM%.mp4"
 if exist "%~dpn1_aac.m4a" move "%~dpn1_aac.m4a" "%~dpn1_aac%RANDOM%.m4a"
 echo.
-ffmpeg_64 -i "%~1" -f wav - | neroaacenc -q 0.4 -ignorelength -if - -of "%~dpn1_aac.m4a"
+ffmpeg_64 -hide_banner -i "%~1" -c:a pcm_f32le -f wav - | neroaacenc -q 0.4 -ignorelength -if - -of "%~dpn1_aac.m4a"
 
 REM Available --encoder-preset values for 'x265' encoder:
 REM ultrafast
@@ -55,7 +55,7 @@ REM slow
 REM slower
 REM veryslow
 REM placebo
-
+::ffmpeg_64.exe -i "%~1" -preset medium -c:v libx265 -x265-params crf=23 -an "%~dpn1_hevc.mp4"
 HandBrakeCLI_x64.exe -i "%~1" -o "%~dpn1_hevc.mp4" -f mp4 --detelecine --decomb --crop 0:0:0:0 -e x265 -q 23 -a none --vfr --encoder-preset=slower --verbose=1
 REM -q crf{0-51}
 echo.

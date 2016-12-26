@@ -38,23 +38,38 @@ CD /D "%~dp0"
 pushd "%~dp0"
 
 :Main
-if exist "%~dpn1_crf.mkv" ren "%~dpn1_crf.mkv" "%~dpn1_crf%RANDOM%.mkv"
-if exist "%~dpn1_crf.mp4" ren "%~dpn1_crf.mp4" "%~dpn1_crf%RANDOM%.mp4"
-if exist "%~dpn1_aac.m4a" ren "%~dpn1_aac.m4a" "%~dpn1_aac%RANDOM%.m4a"
-::ffmpeg -hide_banner -i "%~1" -c:a pcm_f32le -f wav - | neroaacenc -q 0.4 -ignorelength -if - -of "%~dpn1_aac.m4a"
+if exist "%~dpn1_crf.mkv" move "%~dpn1_crf.mkv" "%~dpn1_crf%RANDOM%.mkv"
+if exist "%~dpn1_crf.hevc" move "%~dpn1_crf.hevc" "%~dpn1_crf%RANDOM%.mp4"
+if exist "%~dpn1_aac.m4a" move "%~dpn1_aac.m4a" "%~dpn1_aac%RANDOM%.m4a"
 echo.
+ffmpeg_64 -hide_banner -i "%~1" -c:a pcm_f32le -f wav - | neroaacenc -q 0.4 -ignorelength -if - -of "%~dpn1_aac.m4a"
 
-x264_64.exe --crf 25 --preset 8 -f -3:-3 -r 16 -b 16 --video-filter resize:width=960,height=540 -o "%~dpn1_crf.mp4" "%~1"
+REM Available --encoder-preset values for 'x265' encoder:
+REM ultrafast
+REM superfast
+REM veryfast
+REM faster
+REM fast
+REM medium
+REM slow
+REM slower
+REM veryslow
+REM placebo
+
+HandBrakeCLI_x64.exe -i "%~1" -o "%~dpn1_hevc.mp4" -f mp4 --detelecine --decomb --crop 0:0:240:240 -e x265 -q 23 -a none --encoder-preset=medium --verbose=1
+REM -q crf{0-51}
 echo.
 
 :Clean
-mkvmerge.exe -o "%~dpn1_crf.mkv" "%~dpn1_crf.mp4" "%~dpn1_aac.m4a"
+ffmpeg_64.exe -i "%~dpn1_hevc.mp4" -i "%~dpn1_aac.m4a" -c copy -map 0:v:0 -map 1:a:0 "%~dpn1_crf.mkv"
+::if exist "%~dpn1_crf.mp4" (
 ::del /f /q "%~dpn1_aac.m4a"
-::del /f /q "%~dpn1_crf.mp4"
-echo.
+::del /f /q "%~dpn1_hevc.mp4"
+::)
 shift /1
 if [%1] == [] goto :EndDateAndTime
 if exist %1 goto :Main
+echo.
 
 :EndDateAndTime
 set end=%time%
@@ -108,4 +123,13 @@ goto :End
 :WithoutMinutes
 echo ½ø³ÌºÄÊ± %totalsecs% Ãë¡£
 :End
+pause
+exit
+::
+FOR /F "usebackq tokens=2 delims=: " %%i IN (`MediaInfo_CLI_x64\MediaInfo.exe %~1^|findstr Height`) DO @set /a h= %%i ||pause
+FOR /F "usebackq tokens=2 delims=: " %%i IN (`MediaInfo_CLI_x64\MediaInfo.exe %~1^|findstr Width`) DO @set /a w= %%i ||pause
+FOR /F "skip=1 usebackq tokens=4 delims=: " %%i IN (`MediaInfo_CLI_x64\MediaInfo.exe %~1^|findstr "^^Original frame"`) DO @set /a f=  %%i ||pause
+echo %f%
+echo %h%
+echo %w%
 pause

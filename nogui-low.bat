@@ -41,7 +41,7 @@ pushd "%~dp0"
 if exist "%~dpn1_crf.mkv" ren "%~dpn1_crf.mkv" "%~dpn1_crf%RANDOM%.mkv"
 if exist "%~dpn1_crf.mp4" ren "%~dpn1_crf.mp4" "%~dpn1_crf%RANDOM%.mp4"
 if exist "%~dpn1_aac.m4a" ren "%~dpn1_aac.m4a" "%~dpn1_aac%RANDOM%.m4a"
-ffmpeg -i "%~1" -f wav - | neroaacenc -q 0.4 -ignorelength -if - -of "%~dpn1_aac.m4a"
+ffmpeg -hide_banner -i "%~1" -c:a pcm_f32le -f wav - | neroaacenc -q 0.4 -ignorelength -if - -of "%~dpn1_aac.m4a"
 echo.
 
 x264.exe --crf 25 --preset 8 -f -3:-3 -r 16 -b 16 -o "%~dpn1_crf.mp4" "%~1"

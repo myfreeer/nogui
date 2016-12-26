@@ -95,10 +95,12 @@ if defined Video_Encode_Custom_Option set Video_Encode_CommandLine=%Video_Encode
 goto :Encode
 
 :x265
-echo Not Supported Yet, Use FFmpeg instead
-set Video_Encoder=%FFmpeg%
-set Video_Encode_Codec=x265
-goto :ffmpeg
+::echo Not Supported Yet, Use FFmpeg instead
+::set Video_Encoder=%FFmpeg%
+::set Video_Encode_Codec=x265
+::goto :ffmpeg
+set Video_Encode_CommandLine=%Video_Encoder% --crf %Video_Encode_Quality% --preset %Video_Encode_Preset% --no-rect --ctu 32 --no-sao  --me 2  --subme 3 --no-open-gop --keyint 360 --min-keyint 1 --colormatrix bt709 --range limited --deblock -1:-1 --merange 44 --rc-lookahead 80 --bframes 6 --ref 4 --no-amp  --pmode --pme --output "%~dpn1_video.mp4" "%~1"
+goto :Encode
 
 :handbrake
 set Video_Encode_CommandLine=%Video_Encoder% -i "%~1" -o "%~dpn1_video.mkv" -f mkv --detelecine --decomb -e %Video_Encode_Codec% -q %Video_Encode_Quality% -a none --encoder-preset=%Video_Encode_Preset% --verbose=1
@@ -116,7 +118,7 @@ if exist "%~dpn1_video.mkv" move "%~dpn1_video.mkv" "%~dpn1_video%RANDOM%.mkv"
 if exist "%~dpn1_aac.m4a" move "%~dpn1_aac.m4a" "%~dpn1_aac%RANDOM%.m4a"
 
 :Encode_Audio
-%FFmpeg% -hide_banner -i "%~1" -f wav - | %Audio_Encoder% -q %Audio_Encode_Quality% -ignorelength -if - -of "%~dpn1_aac.m4a"
+%FFmpeg% -hide_banner -i "%~1" -c:a pcm_f32le -f wav - | %Audio_Encoder% -q %Audio_Encode_Quality% -ignorelength -if - -of "%~dpn1_aac.m4a"
 echo.
 goto :Encode_Video
 
@@ -162,6 +164,7 @@ echo.
 :Next
 shift /1
 set ErrorSrc=0
+set Error=0
 if [%1] == [] goto :EndDateAndTime
 if exist %1 goto :Main
 
