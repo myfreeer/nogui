@@ -77,10 +77,9 @@ if exist "%~dpn1_opus.mka" move "%~dpn1_opus.mka" "%~dpn1_opus%RANDOM%.mka"
 echo. "%TEMPFILE%"
 pause
 %FFmpeg% -hide_banner -i "%~dpn1_aac.m4a" >nul 2>"%TEMPFILE%"
-FOR /F "tokens=8 delims=:, " %%v IN ('type "%TEMPFILE%" ^| find /i "bitrate"') DO set /a bitrate=%%v * 3 / 4
-if not defined bitrate call :Error Bitrate Not Defined.
-REM mod 8
-for /l %%i in (512,-8,8) do if %bitrate% lss %%i set Audio_Encode_Bitrate=%%i
+FOR /F "tokens=8 delims=:, " %%v IN ('type "%TEMPFILE%" ^| find /i "bitrate"') DO set /a Audio_Encode_Bitrate=%%v * 3 / 4
+set /a Audio_Encode_Bitrate=(%Audio_Encode_Bitrate%*8+1)*8
+if 512 lss %Audio_Encode_Bitrate% set /a Audio_Encode_Bitrate=512
 if not defined Audio_Encode_Bitrate call :Error Audio_Encode_Bitrate Not Defined.
 
 :opus
