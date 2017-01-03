@@ -49,7 +49,7 @@ pushd "%~dp0"
 set FFmpeg_x64=ffmpeg_64.exe
 set FFmpeg_x86=ffmpeg.exe
 set Audio_Encoder=neroAacEnc.exe
-set Audio_Encode_Quality=0.25
+set Audio_Encode_Quality=0.4
 set "TEMPFILE=%TEMP%\1pAac2pOpus.log"
 if exist %systemroot%\syswow64\cmd.exe goto :x64
 
@@ -67,24 +67,22 @@ pause
 exit
 
 :Main
-if exist "%~dpn1_aac.m4a" move "%~dpn1_aac.m4a" "%~dpn1_aac%RANDOM%.m4a"
+::if exist "%~dpn1_aac.m4a" move "%~dpn1_aac.m4a" "%~dpn1_aac%RANDOM%.m4a"
 if exist "%~dpn1_opus.mka" move "%~dpn1_opus.mka" "%~dpn1_opus%RANDOM%.mka"
 
 :aac
-%FFmpeg% -hide_banner -i "%~1" -c:a pcm_f32le -f wav - | neroaacenc -q %Audio_Encode_Quality% -ignorelength -if - -of "%~dpn1_aac.m4a"
+::%FFmpeg% -hide_banner -i "%~1" -c:a pcm_f32le -f wav - | neroaacenc -q %Audio_Encode_Quality% -ignorelength -if - -of "%~dpn1_aac.m4a"
 
 :getBitrateFromAAC
-echo. "%TEMPFILE%"
-pause
 %FFmpeg% -hide_banner -i "%~dpn1_aac.m4a" >nul 2>"%TEMPFILE%"
-FOR /F "tokens=8 delims=:, " %%v IN ('type "%TEMPFILE%" ^| find /i "bitrate"') DO set /a Audio_Encode_Bitrate=%%v * 3 / 4
-set /a Audio_Encode_Bitrate=(%Audio_Encode_Bitrate%*8+1)*8
+FOR /F "tokens=8 delims=:, " %%v IN ('find /i "bitrate" "%TEMPFILE%"') DO set /a Audio_Encode_Bitrate=%%v * 3 / 4
+set /a Audio_Encode_Bitrate=(%Audio_Encode_Bitrate%/8+1)*8
 if 512 lss %Audio_Encode_Bitrate% set /a Audio_Encode_Bitrate=512
 if not defined Audio_Encode_Bitrate call :Error Audio_Encode_Bitrate Not Defined.
-
 :opus
 %FFmpeg% -hide_banner -i "%~1" -c:a libopus -b:a %Audio_Encode_Bitrate%k "%~dpn1_opus.mka"
 echo.
+del /q /f "%TEMPFILE%"
 goto :Next
 
 :Next
