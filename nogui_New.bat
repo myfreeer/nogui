@@ -11,7 +11,7 @@ set /p "_f=把片源拖到此处并回车:"
 if [%_f%]==[] goto :Input
 if not exist %_f% goto :Input
 if exist %_f% start %0 %_f%
-exit
+exit /b
 
 :BeginDateAndTime
 set args=0
@@ -99,7 +99,11 @@ goto :Encode
 ::set Video_Encoder=%FFmpeg%
 ::set Video_Encode_Codec=x265
 ::goto :ffmpeg
-set Video_Encode_CommandLine=%Video_Encoder% --crf %Video_Encode_Quality% --preset %Video_Encode_Preset% --no-rect --ctu 32 --no-sao  --me 2  --subme 3 --no-open-gop --keyint 360 --min-keyint 1 --colormatrix bt709 --range limited --deblock -1:-1 --merange 44 --rc-lookahead 80 --bframes 6 --ref 4 --no-amp  --pmode --pme --output "%~dpn1_video.mp4" "%~1"
+if defined Video_Encode_Custom_Option goto :x265_Custom
+%FFmpeg% -hide_banner -i "%~1" -f yuv4mpegpipe -an - | %Video_Encoder% --crf %Video_Encode_Quality% --preset %Video_Encode_Preset% --no-rect --ctu 32 --no-sao  --me 2  --subme 3 --no-open-gop --keyint 360 --min-keyint 1 --range limited --deblock -1:-1 --merange 44 --rc-lookahead 80 --bframes 6 --ref 4 --no-amp  --pmode --pme - -o "%~dpn1_video.hevc"
+goto :Encode
+:x265_Custom
+%FFmpeg%  -hide_banner -i "%~1" -f yuv4mpegpipe -an - | %Video_Encoder% --crf %Video_Encode_Quality% --preset %Video_Encode_Preset%  %Video_Encode_Custom_Option% --output "%~dpn1_video.hevc" -
 goto :Encode
 
 :handbrake
@@ -123,6 +127,7 @@ echo.
 goto :Encode_Video
 
 :Encode_Video
+if not defined Video_Encode_CommandLine goto :Mux_And_Clean
 %Video_Encode_CommandLine%
 echo.
 goto :Mux_And_Clean
@@ -145,7 +150,7 @@ goto :Next
 
 :Mux_And_Clean
 echo %Audio_Encoder% | find /i "ffmpeg">nul && goto :Mux_Opus
-%FFmpeg% -i "%~dpn1_video.mkv" -i "%~dpn1_aac.m4a" -c copy -map 0:v:0 -map 1:a:0 "%~dpn1_encoded.%Output_File_Format%"
+%FFmpeg% -hide_banner -i "%~dpn1_video.mkv" -i "%~dpn1_aac.m4a" -c copy -map 0:v:0 -map 1:a:0 "%~dpn1_encoded.%Output_File_Format%"
 if [%ERRORLEVEL%] == [0] if exist "%~dpn1_encoded.%Output_File_Format%" (
 del /f /q "%~dpn1_aac.m4a"
 del /f /q "%~dpn1_video.mkv"
@@ -154,7 +159,7 @@ echo.
 goto :Next
 
 :Mux_Opus
-%FFmpeg% -i "%~dpn1_video.mkv" -i "%~dpn1_opus.mka" -c copy -map 0:v:0 -map 1:a:0 "%~dpn1_encoded.%Output_File_Format%" 
+%FFmpeg% -hide_banner -i "%~dpn1_video.mkv" -i "%~dpn1_opus.mka" -c copy -map 0:v:0 -map 1:a:0 "%~dpn1_encoded.%Output_File_Format%" 
 if [%ERRORLEVEL%] == [0] if exist "%~dpn1_encoded.%Output_File_Format%" (
 del /f /q "%~dpn1_opus.mka"
 del /f /q "%~dpn1_video.mkv"
@@ -214,15 +219,21 @@ goto :WithMinutes
 ) else ( 
 goto :WithoutMinutes
 )
+
 :WithMinutes
+set /a hrs=%totalsecs%/3600
+if %hrs% GEQ 1 goto :WithHours
 echo 进程耗时 %mins%分钟%secs%秒（共计%totalsecs%秒）。
+goto :End
+:WithHours
+echo 进程耗时 %hrs%小时%mins%分钟%secs%秒（共计%totalsecs%秒）。
 goto :End
 :WithoutMinutes
 echo 进程耗时 %totalsecs% 秒。
 
 :End
 pause
-exit
+exit /b
 
 :Error
 set Error=1
