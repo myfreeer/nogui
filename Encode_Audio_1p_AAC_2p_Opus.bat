@@ -138,8 +138,14 @@ goto :WithMinutes
 ) else ( 
 goto :WithoutMinutes
 )
+
 :WithMinutes
+set /a hrs=%totalsecs%/3600
+if %hrs% GEQ 1 goto :WithHours
 echo 进程耗时 %mins%分钟%secs%秒（共计%totalsecs%秒）。
+goto :End
+:WithHours
+echo 进程耗时 %hrs%小时%mins%分钟%secs%秒（共计%totalsecs%秒）。
 goto :End
 :WithoutMinutes
 echo 进程耗时 %totalsecs% 秒。
