@@ -85,8 +85,9 @@ exit
 
 :ffmpeg
 set Video_Encode_Codec_lib=lib%Video_Encode_Codec%
-set Video_Encode_CommandLine=%Video_Encoder% -hide_banner -i "%~1" -preset %Video_Encode_Preset% -c:v %Video_Encode_Codec_lib% -%Video_Encode_Codec%-params no-sao=1:merange=44:aq-mode=1:aq_strength=0.8:psy-rd=1.5:psy-rdoq=3.0:rdoq-level=2:bframes=6:subme=3:me=2:rc-lookahead=80:crf=%Video_Encode_Quality% -q %Video_Encode_Quality% -an "%~dpn1_video.mkv"
-if defined Video_Encode_Custom_Option set Video_Encode_CommandLine=%Video_Encoder% -hide_banner -i "%~1" -preset %Video_Encode_Preset% -c:v %Video_Encode_Codec_lib% -%Video_Encode_Codec%-params %Video_Encode_Custom_Option%:crf=%Video_Encode_Quality% -q %Video_Encode_Quality% -an "%~dpn1_video.mkv"
+set Video_Encode_CommandLine=%Video_Encoder% -hide_banner -i "%~1" -preset %Video_Encode_Preset% -c:v %Video_Encode_Codec_lib% -%Video_Encode_Codec%-params pmode=1:pme=1:bframes=6:subme=3:me=2:rc-lookahead=120:crf=%Video_Encode_Quality% -q:v %Video_Encode_Quality% -an "%~dpn1_video.mkv"
+
+if defined Video_Encode_Custom_Option set Video_Encode_CommandLine=%Video_Encoder% -hide_banner -i "%~1" -preset %Video_Encode_Preset% -c:v %Video_Encode_Codec_lib% -%Video_Encode_Codec%-params crf=%Video_Encode_Quality%:%Video_Encode_Custom_Option% -q:v %Video_Encode_Quality% -an "%~dpn1_video.mkv"
 goto :Encode
 
 :x264
@@ -122,12 +123,14 @@ if exist "%~dpn1_video.mkv" move "%~dpn1_video.mkv" "%~dpn1_video%RANDOM%.mkv"
 if exist "%~dpn1_aac.m4a" move "%~dpn1_aac.m4a" "%~dpn1_aac%RANDOM%.m4a"
 
 :Encode_Audio
+set FFREPORT=file='%~dpn1_audio_log.log':level=32
 %FFmpeg% -hide_banner -i "%~1" -c:a pcm_f32le -f wav - | %Audio_Encoder% -q %Audio_Encode_Quality% -ignorelength -if - -of "%~dpn1_aac.m4a"
 echo.
 goto :Encode_Video
 
 :Encode_Video
 if not defined Video_Encode_CommandLine goto :Mux_And_Clean
+set FFREPORT=file='%~dpn1_video_log.log':level=32
 %Video_Encode_CommandLine%
 echo.
 goto :Mux_And_Clean
@@ -137,18 +140,21 @@ if exist "%~dpn1_encoded.%Output_File_Format%" move "%~dpn1_encoded.%Output_File
 echo %Video_Encoder% | find /i "ffmpeg">nul && goto :Encode_ffmpeg_All
 
 :Encode_Audio_ffmpeg
+set FFREPORT=file='%~dpn1_audio_log.log':level=32
 if exist "%~dpn1_opus.mka" move "%~dpn1_opus.mka" "%~dpn1_opus%RANDOM%.mka"
 if exist "%~dpn1_video.mkv" move "%~dpn1_video.mkv" "%~dpn1_video%RANDOM%.mkv"
 %FFmpeg% -hide_banner -i "%~1" -c:a libopus -b:a %Audio_Encode_Bitrate% "%~dpn1_opus.mka"
 goto :Encode_Video
 
 :Encode_ffmpeg_All
-set Video_Encode_CommandLine=%FFmpeg% -hide_banner -i "%~1" -preset %Video_Encode_Preset% -c:v %Video_Encode_Codec_lib% -%Video_Encode_Codec%-params no-sao=1:merange=44:aq-mode=1:aq_strength=0.8:psy-rd=1.5:psy-rdoq=3.0:rdoq-level=2:bframes=6:subme=3:me=2:rc-lookahead=80:crf=%Video_Encode_Quality% -c:a libopus -b:a %Audio_Encode_Bitrate% "%~dpn1_encoded.%Output_File_Format%"
+set FFREPORT=file='%~dpn1_video_log.log':level=32
+set Video_Encode_CommandLine=%FFmpeg% -hide_banner -i "%~1" -preset %Video_Encode_Preset% -c:v %Video_Encode_Codec_lib% -pix_fmt yuv420p10le -profile:v main10 -%Video_Encode_Codec%-params pmode=1:pme=1:no-sao=1:bframes=6:subme=3:me=2:rc-lookahead=120:crf=%Video_Encode_Quality% -q:v %Video_Encode_Quality% -af aformat=channel_layouts="7.1|5.1|stereo" -c:a libopus -b:a %Audio_Encode_Bitrate% "%~dpn1_encoded.%Output_File_Format%"
 if defined Video_Encode_Custom_Option set Video_Encode_CommandLine=%FFmpeg% -hide_banner -i "%~1" -preset %Video_Encode_Preset% -c:v %Video_Encode_Codec_lib% -%Video_Encode_Codec%-params %Video_Encode_Custom_Option%:crf=%Video_Encode_Quality% -c:a libopus -b:a %Audio_Encode_Bitrate% "%~dpn1_encoded.%Output_File_Format%"
 %Video_Encode_CommandLine%
 goto :Next
 
 :Mux_And_Clean
+set FFREPORT=file='%~dpn1_mux_log.log':level=32
 echo %Audio_Encoder% | find /i "ffmpeg">nul && goto :Mux_Opus
 %FFmpeg% -hide_banner -i "%~dpn1_video.mkv" -i "%~dpn1_aac.m4a" -c copy -map 0:v:0 -map 1:a:0 "%~dpn1_encoded.%Output_File_Format%"
 if [%ERRORLEVEL%] == [0] if exist "%~dpn1_encoded.%Output_File_Format%" (
