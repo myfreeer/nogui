@@ -7,7 +7,7 @@ if not exist %1 goto :Input
 goto :BeginDateAndTime
 
 :Input
-set /p "_f=°ÑÆ¬Ô´ÍÏµ½´Ë´¦²¢»Ø³µ:"
+set /p "_f=æŠŠç‰‡æºæ‹–åˆ°æ­¤å¤„å¹¶å›è½¦:"
 if [%_f%]==[] goto :Input
 if not exist %_f% goto :Input
 if exist %_f% start %0 %_f%
@@ -41,7 +41,7 @@ if %Hour% LSS 10 set Hour=0%Hour%
 if %Second% LSS 10 set Second=0%Second%
 set StartTimestamp=%Hour%:%Minute%:%Second% %ampm%
 SET StartTimestamp1=%time:~0,2%:%time:~3,2%:%Second%
-echo ½ø³Ì¿ªÊ¼ÓÚ %startdate% // %StartTimestamp% -- %StartTimestamp1% //
+echo è¿›ç¨‹å¼€å§‹äº %startdate% // %StartTimestamp% -- %StartTimestamp1% //
 
 :Init
 CD /D "%~dp0"
@@ -132,7 +132,7 @@ if %Second% LSS 10 set Second=0%Second%
 set EndTimestamp=%Hour%:%Minute%:%Second% %ampm%
 SET EndTimestamp1=%time:~0,2%:%time:~3,2%:%Second%
 echo:
-echo ½ø³ÌÍê³ÉÓÚ %date% // %EndTimestamp% -- %EndTimestamp1% //
+echo è¿›ç¨‹å®Œæˆäº %date% // %EndTimestamp% -- %EndTimestamp1% //
 IF %mins% GEQ 1 (
 goto :WithMinutes
 ) else ( 
@@ -142,13 +142,13 @@ goto :WithoutMinutes
 :WithMinutes
 set /a hrs=%totalsecs%/3600
 if %hrs% GEQ 1 goto :WithHours
-echo ½ø³ÌºÄÊ± %mins%·ÖÖÓ%secs%Ãë£¨¹²¼Æ%totalsecs%Ãë£©¡£
+echo è¿›ç¨‹è€—æ—¶ %mins%åˆ†é’Ÿ%secs%ç§’ï¼ˆå…±è®¡%totalsecs%ç§’ï¼‰ã€‚
 goto :End
 :WithHours
-echo ½ø³ÌºÄÊ± %hrs%Ğ¡Ê±%mins%·ÖÖÓ%secs%Ãë£¨¹²¼Æ%totalsecs%Ãë£©¡£
+echo è¿›ç¨‹è€—æ—¶ %hrs%å°æ—¶%mins%åˆ†é’Ÿ%secs%ç§’ï¼ˆå…±è®¡%totalsecs%ç§’ï¼‰ã€‚
 goto :End
 :WithoutMinutes
-echo ½ø³ÌºÄÊ± %totalsecs% Ãë¡£
+echo è¿›ç¨‹è€—æ—¶ %totalsecs% ç§’ã€‚
 
 :End
 pause
