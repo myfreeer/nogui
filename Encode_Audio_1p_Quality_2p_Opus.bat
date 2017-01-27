@@ -1,5 +1,5 @@
 @echo off
-title Nogui 1p aac 2p opus Audio Encoder
+title FFmpeg 1p Quality 2p Opus Audio Encoder
 setlocal EnableExtensions EnableDelayedExpansion
 color 1f
 if [%1]==[] goto :Input
@@ -7,7 +7,7 @@ if not exist %1 goto :Input
 goto :BeginDateAndTime
 
 :Input
-set /p "_f=æŠŠç‰‡æºæ‹–åˆ°æ­¤å¤„å¹¶å›è½¦:"
+set /p "_f=°ÑÆ¬Ô´ÍÏµ½´Ë´¦²¢»Ø³µ:"
 if [%_f%]==[] goto :Input
 if not exist %_f% goto :Input
 if exist %_f% start %0 %_f%
@@ -41,16 +41,15 @@ if %Hour% LSS 10 set Hour=0%Hour%
 if %Second% LSS 10 set Second=0%Second%
 set StartTimestamp=%Hour%:%Minute%:%Second% %ampm%
 SET StartTimestamp1=%time:~0,2%:%time:~3,2%:%Second%
-echo è¿›ç¨‹å¼€å§‹äº %startdate% // %StartTimestamp% -- %StartTimestamp1% //
+echo ½ø³Ì¿ªÊ¼ÓÚ %startdate% // %StartTimestamp% -- %StartTimestamp1% //
 
 :Init
 CD /D "%~dp0"
 pushd "%~dp0"
-set FFmpeg_x64=ffmpeg_64.exe
+set FFmpeg_x64=ffmpeg_hi.exe
 set FFmpeg_x86=ffmpeg.exe
-set Audio_Encoder=neroAacEnc.exe
-set Audio_Encode_Quality=0.4
-set "TEMPFILE=%TEMP%\1pAac2pOpus.log"
+set Audio_Encode_Quality=4
+set "TEMPFILE=%TEMP%\1pQuality2pOpus.log"
 if exist %systemroot%\syswow64\cmd.exe goto :x64
 
 :x86
@@ -62,26 +61,31 @@ set FFmpeg=%FFmpeg_x64%
 goto :Main
 
 :Error
+type %TEMPFILE%
 echo. Error : %*
 pause
 exit
 
 :Main
-::if exist "%~dpn1_aac.m4a" move "%~dpn1_aac.m4a" "%~dpn1_aac%RANDOM%.m4a"
+if exist "%~dpn1_quality.mka" move "%~dpn1_quality.mka" "%~dpn1_quality%RANDOM%.mka"
 if exist "%~dpn1_opus.mka" move "%~dpn1_opus.mka" "%~dpn1_opus%RANDOM%.mka"
 
-:aac
-::%FFmpeg% -hide_banner -i "%~1" -c:a pcm_f32le -f wav - | neroaacenc -q %Audio_Encode_Quality% -ignorelength -if - -of "%~dpn1_aac.m4a"
+:Encode_By_Quality
+echo. Begins Encode_By_Quality
+%FFmpeg% -hide_banner -i "%~1" -vn -sn -to 300 -c:a libvorbis -aq %Audio_Encode_Quality% "%~dpn1_quality.mka"
+echo. Ends Encode_By_Quality
 
 :getBitrateFromAAC
-%FFmpeg% -hide_banner -i "%~dpn1_aac.m4a" >nul 2>"%TEMPFILE%"
+%FFmpeg% -hide_banner -i "%~dpn1_quality.mka" >nul 2>"%TEMPFILE%"
 FOR /F "tokens=8 delims=:, " %%v IN ('find /i "bitrate" "%TEMPFILE%"') DO set /a Audio_Encode_Bitrate=%%v * 3 / 4
 set /a Audio_Encode_Bitrate=(%Audio_Encode_Bitrate%/8+1)*8
 if 512 lss %Audio_Encode_Bitrate% set /a Audio_Encode_Bitrate=512
 if not defined Audio_Encode_Bitrate call :Error Audio_Encode_Bitrate Not Defined.
-:opus
-%FFmpeg% -hide_banner -i "%~1" -c:a libopus -b:a %Audio_Encode_Bitrate%k "%~dpn1_opus.mka"
-echo.
+
+:Encode_Opus
+echo. Begins Encode_Opus
+%FFmpeg% -hide_banner -i "%~1" -vn -sn -to 300 -af aformat=channel_layouts="7.1|6.1|5.1|stereo|mono" -c:a libopus -b:a %Audio_Encode_Bitrate%k "%~dpn1_opus.mka" && del /q /f "%~dpn1_quality.mka"
+echo. Ends Encode_Opus
 del /q /f "%TEMPFILE%"
 goto :Next
 
@@ -132,7 +136,7 @@ if %Second% LSS 10 set Second=0%Second%
 set EndTimestamp=%Hour%:%Minute%:%Second% %ampm%
 SET EndTimestamp1=%time:~0,2%:%time:~3,2%:%Second%
 echo:
-echo è¿›ç¨‹å®Œæˆäº %date% // %EndTimestamp% -- %EndTimestamp1% //
+echo ½ø³ÌÍê³ÉÓÚ %date% // %EndTimestamp% -- %EndTimestamp1% //
 IF %mins% GEQ 1 (
 goto :WithMinutes
 ) else ( 
@@ -142,13 +146,13 @@ goto :WithoutMinutes
 :WithMinutes
 set /a hrs=%totalsecs%/3600
 if %hrs% GEQ 1 goto :WithHours
-echo è¿›ç¨‹è€—æ—¶ %mins%åˆ†é’Ÿ%secs%ç§’ï¼ˆå…±è®¡%totalsecs%ç§’ï¼‰ã€‚
+echo ½ø³ÌºÄÊ± %mins%·ÖÖÓ%secs%Ãë£¨¹²¼Æ%totalsecs%Ãë£©¡£
 goto :End
 :WithHours
-echo è¿›ç¨‹è€—æ—¶ %hrs%å°æ—¶%mins%åˆ†é’Ÿ%secs%ç§’ï¼ˆå…±è®¡%totalsecs%ç§’ï¼‰ã€‚
+echo ½ø³ÌºÄÊ± %hrs%Ğ¡Ê±%mins%·ÖÖÓ%secs%Ãë£¨¹²¼Æ%totalsecs%Ãë£©¡£
 goto :End
 :WithoutMinutes
-echo è¿›ç¨‹è€—æ—¶ %totalsecs% ç§’ã€‚
+echo ½ø³ÌºÄÊ± %totalsecs% Ãë¡£
 
 :End
 pause
