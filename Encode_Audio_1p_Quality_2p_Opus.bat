@@ -67,13 +67,16 @@ pause
 exit
 
 :Main
+set /a args+=1
+title Encoding %args% of %argC% - FFmpeg 1p Quality 2p Opus Audio Encoder
 if exist "%~dpn1_quality.mka" move "%~dpn1_quality.mka" "%~dpn1_quality%RANDOM%.mka"
 if exist "%~dpn1_opus.mka" move "%~dpn1_opus.mka" "%~dpn1_opus%RANDOM%.mka"
 
 :Encode_By_Quality
 echo. Begins Encode_By_Quality
-%FFmpeg% -hide_banner -i "%~1" -vn -sn -to 300 -c:a libvorbis -aq %Audio_Encode_Quality% "%~dpn1_quality.mka"
+%FFmpeg% -hide_banner -i "%~1" -vn -sn -c:a libvorbis -aq %Audio_Encode_Quality% "%~dpn1_quality.mka"
 echo. Ends Encode_By_Quality
+echo. 
 
 :getBitrateFromAAC
 %FFmpeg% -hide_banner -i "%~dpn1_quality.mka" >nul 2>"%TEMPFILE%"
@@ -84,7 +87,7 @@ if not defined Audio_Encode_Bitrate call :Error Audio_Encode_Bitrate Not Defined
 
 :Encode_Opus
 echo. Begins Encode_Opus
-%FFmpeg% -hide_banner -i "%~1" -vn -sn -to 300 -af aformat=channel_layouts="7.1|6.1|5.1|stereo|mono" -c:a libopus -b:a %Audio_Encode_Bitrate%k "%~dpn1_opus.mka" && del /q /f "%~dpn1_quality.mka"
+%FFmpeg% -hide_banner -i "%~1" -vn -sn -af aformat=channel_layouts="7.1|6.1|5.1|stereo|mono" -c:a libopus -b:a %Audio_Encode_Bitrate%k "%~dpn1_opus.mka" && del /q /f "%~dpn1_quality.mka"
 echo. Ends Encode_Opus
 del /q /f "%TEMPFILE%"
 goto :Next
