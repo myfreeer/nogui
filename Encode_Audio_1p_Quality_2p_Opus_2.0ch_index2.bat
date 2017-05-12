@@ -50,6 +50,7 @@ set FFmpeg_x64=ffmpeg_hi.exe
 set FFmpeg_x86=ffmpeg.exe
 set Audio_Encode_Quality=4
 set Audio_Encoder_By_Quality=libvorbis
+set "TEMPFILE=%TEMP%\1pQuality2pOpus.log"
 if exist %systemroot%\syswow64\cmd.exe goto :x64
 
 :x86
@@ -68,24 +69,25 @@ exit
 :Main
 set /a args+=1
 title Encoding %args% of %argC% - FFmpeg 1p Quality 2p Opus Audio Encoder
-if exist "%~dpn1_quality.mka" move "%~dpn1_quality.mka" "%~dpn1_quality%RANDOM%.mka"
-if exist "%~dpn1_opus.mka" move "%~dpn1_opus.mka" "%~dpn1_opus%RANDOM%.mka"
+if exist "%~dpn1_quality_2.mka" move "%~dpn1_quality.mka" "%~dpn1_quality_2_%RANDOM%.mka"
+if exist "%~dpn1_opus_2.mka" move "%~dpn1_opus_2.mka" "%~dpn1_opus_2_%RANDOM%.mka"
 
 :Encode_By_Quality
 echo. Begins Encode_By_Quality
-%FFmpeg% -hide_banner -i "%~1" -vn -sn -dn -c:a %Audio_Encoder_By_Quality% -q:a %Audio_Encode_Quality% "%~dpn1_quality.mka"
+%FFmpeg% -hide_banner -i "%~1" -vn -sn -dn -ac 2 -map 0:a:1 -c:a %Audio_Encoder_By_Quality% -q:a %Audio_Encode_Quality% "%~dpn1_quality_2.mka"
 echo. Ends Encode_By_Quality
 echo. 
 
 :getBitrateFromAAC
-FOR /F "tokens=8 delims=:, " %%v IN ('%FFmpeg% -hide_banner -i "%~dpn1_quality.mka" 2^>^&1^|find /i "bitrate"') DO set /a Audio_Encode_Bitrate=%%v * 3 / 4
+%FFmpeg% -hide_banner -i "%~dpn1_quality.mka" 2>&1
+FOR /F "tokens=8 delims=:, " %%v IN ('%FFmpeg% -hide_banner -i "%~dpn1_quality_2.mka" 2^>^&1^|find /i "bitrate"') DO set /a Audio_Encode_Bitrate=%%v * 3 / 4
 set /a Audio_Encode_Bitrate=(%Audio_Encode_Bitrate%/8+1)*8
 if 512 lss %Audio_Encode_Bitrate% set /a Audio_Encode_Bitrate=512
 if not defined Audio_Encode_Bitrate call :Error Audio_Encode_Bitrate Not Defined.
 
 :Encode_Opus
 echo. Begins Encode_Opus
-%FFmpeg% -hide_banner -i "%~1" -vn -af aformat=channel_layouts="7.1|6.1|5.1|stereo|mono" -c:a libopus -b:a %Audio_Encode_Bitrate%k "%~dpn1_opus.mka" && del /q /f "%~dpn1_quality.mka"
+%FFmpeg% -hide_banner -i "%~1" -vn -ac 2 -map 0:a:1 -c:a libopus -b:a %Audio_Encode_Bitrate%k "%~dpn1_opus_2.mka" && del /q /f "%~dpn1_quality.mka"
 echo. Ends Encode_Opus
 goto :Next
 
