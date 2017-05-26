@@ -112,8 +112,9 @@ goto :Encode_Audio
 :Encode_Audio
 ::set FFREPORT=file='%~dpn1_audio_log.log':level=32
 echo. Begins Encode_Audio_By_Quality
-%FFmpeg% -hide_banner -i "%~1" -vn -sn -c:a libvorbis -aq %Audio_Encode_Quality% "%~dpn1_quality.mka"
+%FFmpeg% -hide_banner -i "%~1" -vn -sn -dn -c:a pcm_f32le -f wav - | %FFmpeg% -hide_banner -i - -vn -sn -dn -c:a %Audio_Encoder_By_Quality% -q:a %Audio_Encode_Quality% "%~dpn1_quality.mka"
 echo. Ends Encode_Audio_By_Quality
+rem ffmpeg -i "%~1" -to 300 -vn -sn -dn -ac 2 -c:a pcm_f32le -f wav - | fdkaac -p 29 -m 3 -o 3.m4a -
 
 :getBitrateFromAAC
 %FFmpeg% -hide_banner -i "%~dpn1_quality.mka" >nul 2>"%TEMPFILE%"
@@ -152,7 +153,7 @@ REM -vf pp=ac
 REM Example: Encode x265 as 10bit
 REM -pix_fmt yuv420p10le -profile:v main10
 REM set Video_Encode_CommandLine=%FFmpeg%  -hide_banner -i "%~1" -vf cropdetect=4:4 -preset %Video_Encode_Preset% -c:v %Video_Encode_Codec_lib% -crf %Video_Encode_Quality% -%Video_Encode_Codec%-params pmode=1:ref=4:aq-mode=2:bframes=8:weightb=1:rc-lookahead=120:crf=18 -q:v %Video_Encode_Quality% -af aformat=channel_layouts="7.1|6.1|5.1|stereo|mono" -c:a libopus -b:a %Audio_Encode_Bitrate%k  "%~dpn1_encoded.%Output_File_Format%"
-set Video_Encode_CommandLine=%FFmpeg%  -hide_banner -sws_flags lanczos -i "%~1" %vf% -preset %Video_Encode_Preset% -c:v %Video_Encode_Codec_lib% -crf %Video_Encode_Quality% -%Video_Encode_Codec%-params pmode=1:ref=4:aq-mode=2:bframes=8:subme=3:me=3:keyint=720:min-keyint=1:rc-lookahead=120:crf=%Video_Encode_Quality% -q:v %Video_Encode_Quality% -af aformat=channel_layouts="7.1|6.1|5.1|stereo|mono" -c:a libopus -b:a %Audio_Encode_Bitrate%k  "%~dpn1_encoded.%Output_File_Format%"
+set Video_Encode_CommandLine=%FFmpeg%  -hide_banner -sws_flags lanczos -i "%~1" %vf% -preset %Video_Encode_Preset% -c:v %Video_Encode_Codec_lib% -crf %Video_Encode_Quality% -%Video_Encode_Codec%-params pmode=1:ref=4:aq-mode=2:bframes=8:subme=3:me=3:keyint=720:weightb=1:min-keyint=1:limit-modes=1:limit-tu=4:rc-lookahead=120:crf=%Video_Encode_Quality% -q:v %Video_Encode_Quality% -af aformat=channel_layouts="7.1|6.1|5.1|stereo|mono" -c:a libopus -b:a %Audio_Encode_Bitrate%k  "%~dpn1_encoded.%Output_File_Format%"
 
 if defined Video_Encode_Custom_Option set Video_Encode_CommandLine=%Video_Encoder% -hide_banner -i "%~1" -preset %Video_Encode_Preset% -c:v %Video_Encode_Codec_lib% -crf %Video_Encode_Quality% -%Video_Encode_Codec%-params crf=%Video_Encode_Quality%:%Video_Encode_Custom_Option% -q:v %Video_Encode_Quality% -af aformat=channel_layouts="7.1|6.1|5.1|stereo|mono" -c:a libopus -b:a %Audio_Encode_Bitrate%k "%~dpn1_encoded.%Output_File_Format%"
 

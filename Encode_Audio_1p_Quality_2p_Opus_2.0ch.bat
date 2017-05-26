@@ -74,7 +74,7 @@ if exist "%~dpn1_opus.mka" move "%~dpn1_opus.mka" "%~dpn1_opus%RANDOM%.mka"
 
 :Encode_By_Quality
 echo. Begins Encode_By_Quality
-%FFmpeg% -hide_banner -i "%~1" -vn -sn -dn -ac 2 -c:a %Audio_Encoder_By_Quality% -q:a %Audio_Encode_Quality% "%~dpn1_quality.mka"
+%FFmpeg% -hide_banner -i "%~1" -vn -sn -dn -ac 2 -c:a pcm_f32le -f wav - | %FFmpeg% -hide_banner -i - -vn -sn -dn -c:a %Audio_Encoder_By_Quality% -q:a %Audio_Encode_Quality% "%~dpn1_quality.mka""%~dpn1_quality.mka"
 echo. Ends Encode_By_Quality
 echo. 
 
