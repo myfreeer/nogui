@@ -69,12 +69,12 @@ exit
 :Main
 set /a args+=1
 title Encoding %args% of %argC% - FFmpeg 1p Quality 2p Opus Audio Encoder
-if exist "%~dpn1_quality_2.mka" move "%~dpn1_quality.mka" "%~dpn1_quality_2_%RANDOM%.mka"
+if exist "%~dpn1_quality_2.mka" move "%~dpn1_quality_2.mka" "%~dpn1_quality_2_%RANDOM%.mka"
 if exist "%~dpn1_opus_2.mka" move "%~dpn1_opus_2.mka" "%~dpn1_opus_2_%RANDOM%.mka"
 
 :Encode_By_Quality
 echo. Begins Encode_By_Quality
-%FFmpeg% -hide_banner -i "%~1" -vn -sn -dn -ac 2 -map 0:a:1 -c:a pcm_f32le -f wav - | %FFmpeg% -hide_banner -i - -vn -sn -dn -c:a %Audio_Encoder_By_Quality% -q:a %Audio_Encode_Quality% "%~dpn1_quality.mka"
+%FFmpeg% -hide_banner -i "%~1" -vn -sn -dn -ac 2 -map 0:a:1 -c:a pcm_f32le -f wav - | %FFmpeg% -hide_banner -i - -vn -sn -dn -c:a %Audio_Encoder_By_Quality% -q:a %Audio_Encode_Quality% "%~dpn1_quality_2.mka"
 echo. Ends Encode_By_Quality
 echo. 
 
