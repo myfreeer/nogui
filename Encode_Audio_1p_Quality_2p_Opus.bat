@@ -85,7 +85,7 @@ if not defined Audio_Encode_Bitrate call :Error Audio_Encode_Bitrate Not Defined
 
 :Encode_Opus
 echo. Begins Encode_Opus
-%FFmpeg% -hide_banner -i "%~1" -vn -af aformat=channel_layouts="7.1|6.1|5.1|stereo|mono" -c:a libopus -b:a %Audio_Encode_Bitrate%k "%~dpn1_opus.mka" && del /q /f "%~dpn1_quality.mka"
+%FFmpeg% -hide_banner -i "%~1" -vn -sn -dn -c:a pcm_f32le -f wav - | %FFmpeg% -hide_banner -i -  -vn -af aformat=channel_layouts="7.1|6.1|5.1|stereo|mono" -c:a libopus -b:a %Audio_Encode_Bitrate%k "%~dpn1_opus.mka" && del /q /f "%~dpn1_quality.mka"
 echo. Ends Encode_Opus
 goto :Next
 

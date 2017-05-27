@@ -74,7 +74,7 @@ if exist "%~dpn1_opus.mka" move "%~dpn1_opus.mka" "%~dpn1_opus%RANDOM%.mka"
 
 :Encode_By_Quality
 echo. Begins Encode_By_Quality
-%FFmpeg% -hide_banner -i "%~1" -vn -sn -dn -ac 2 -c:a pcm_f32le -f wav - | %FFmpeg% -hide_banner -i - -vn -sn -dn -c:a %Audio_Encoder_By_Quality% -q:a %Audio_Encode_Quality% "%~dpn1_quality.mka""%~dpn1_quality.mka"
+%FFmpeg% -hide_banner -i "%~1" -vn -sn -dn -ac 2 -c:a pcm_f32le -f wav - | %FFmpeg% -hide_banner -i - -vn -sn -dn -c:a %Audio_Encoder_By_Quality% -q:a %Audio_Encode_Quality% "%~dpn1_quality.mka"
 echo. Ends Encode_By_Quality
 echo. 
 
@@ -87,7 +87,7 @@ if not defined Audio_Encode_Bitrate call :Error Audio_Encode_Bitrate Not Defined
 
 :Encode_Opus
 echo. Begins Encode_Opus
-%FFmpeg% -hide_banner -i "%~1" -vn -af "pan=stereo| FL=FL+0.707107FC+0.707107BL+0.707107SL | FR=FR+0.707107FC+0.707107BR+0.707107SR" -c:a libopus -b:a %Audio_Encode_Bitrate%k "%~dpn1_opus.mka" && del /q /f "%~dpn1_quality.mka"
+%FFmpeg% -hide_banner -i "%~1" -vn -sn -dn -ac 2 -c:a pcm_f32le -f wav - | %FFmpeg% -hide_banner -i - -vn -sn -dn -c:a libopus -b:a %Audio_Encode_Bitrate%k "%~dpn1_opus.mka" && del /q /f "%~dpn1_quality.mka"
 echo. Ends Encode_Opus
 goto :Next
 
