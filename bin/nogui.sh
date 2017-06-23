@@ -162,7 +162,7 @@ calc() {
 
 # https://stackoverflow.com/a/965072
 get_filename() {
-  filename=$(basename "$1")
+  filename=$(basename "$*")
   # extension="${filename##*.}"
   echo "${filename%.*}"
 }
@@ -234,17 +234,14 @@ encode_audio_bitrate() {
 }
 
 encode_opus_by_quality() {
-  if [[ "$1" == "2" ]] ; then
+  if [[ "${ACHANNELS}" == "2" ]] ; then
     local ac="2"
-    shift
   fi
-  local input_file="$1"
+  local input_file="${INPUT}"
   local input_filename="$(get_filename \"${input_file}\")"
   local tmp_file="tmp/${input_filename}_quality_tmp.mka"
-  local output_file="$2"
-  output_file="${output_file:-tmp/${input_filename}_opus.mka}"
-  local quality="$3"
-  quality="${quality:-4}"
+  local output_file="${OUTPUT:-tmp/${input_filename}_opus.mka}"
+  local quality="${AQUALITY:-4}"
   encode_audio_vorbis $ac "${input_file}" "${tmp_file}" "${quality}"
   local bitrate=$(get_last_bitrate "${tmp_file}")
   bitrate=$(($bitrate*3/4))
