@@ -1,0 +1,8 @@
+*.exe
+tmp/*
+*.mkv
+*.mka
+*.mp4
+*.m4a
+*.aac
+*.ac3
