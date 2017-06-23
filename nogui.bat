@@ -1,5 +1,5 @@
 @echo off
-title Nogui FFmpeg Encoder
+title Nogui
 setlocal EnableExtensions EnableDelayedExpansion
 color 1f
 pushd "%~dp0"
@@ -57,7 +57,7 @@ if not exist "bin\busybox.exe" call :Error "bin\busybox.exe"
 if not exist "bin\nogui.sh" call :Error "bin\nogui.sh"
 if defined Error if [%Error%]==[1] goto :End
 set /a args+=1
-title Encoding %args% of %argC% - Nogui
+title %lc_Encoding% %args% %lc_Encoding_of% %argC% - Nogui
 
 set CommandLine=bin\busybox.exe sh bin\nogui.sh -b="%Bin%" -i="%~1" -o="%~dpn1_encoded.%Output_File_Format%" -ve=%Video_Encode_Codec% -crf=%Video_Encode_Quality% -vp=%Video_Encode_Preset% -ae=%Audio_Encode_Codec% -aq=%Audio_Encode_Quality% 
 

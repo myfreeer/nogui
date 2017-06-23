@@ -6,3 +6,4 @@ tmp/*
 *.m4a
 *.aac
 *.ac3
+*.log
