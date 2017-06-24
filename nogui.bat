@@ -7,14 +7,7 @@ set args=0
 call :getargc argC %*
 
 :Default_Config
-set Video_Encode_Codec=x265
-set Video_Encode_Quality=21
-set Video_Encode_Preset=slow
 set Output_File_Format=mkv
-set Audio_Encode_Codec=opus
-set Audio_Encode_Quality=3
-set Auto_Crop=0
-set Resize=0
 
 :Import_Config
 set Config_File=config.ini
@@ -59,8 +52,11 @@ if defined Error if [%Error%]==[1] goto :End
 set /a args+=1
 title %lc_Encoding% %args% %lc_Encoding_of% %argC% - Nogui
 
-set CommandLine=bin\busybox.exe sh bin\nogui.sh -b="%Bin%" -i="%~1" -o="%~dpn1_encoded.%Output_File_Format%" -ve=%Video_Encode_Codec% -crf=%Video_Encode_Quality% -vp=%Video_Encode_Preset% -ae=%Audio_Encode_Codec% -aq=%Audio_Encode_Quality% 
-
+set CommandLine=bin\busybox.exe sh bin\nogui.sh -b="%Bin%" -i="%~1" -o="%~dpn1_encoded.%Output_File_Format%"
+if defined Video_Encode_Codec set "CommandLine=%CommandLine% -ve=%Video_Encode_Codec%"
+if defined Video_Encode_Quality set "CommandLine=%CommandLine% -crf=%Video_Encode_Quality%"
+if defined Video_Encode_Preset set "CommandLine=%CommandLine% -vp=%Video_Encode_Preset%"
+if defined Audio_Encode_Codec set "CommandLine=%CommandLine% -ae=%Audio_Encode_Codec%"
 if defined Log_File set "CommandLine=%CommandLine% -l=%Log_File%"
 if defined Nogui_Preset set "CommandLine=%CommandLine% -p=%Nogui_Preset%"
 if defined Resize if "%Resize%" neq "0" set "CommandLine=%CommandLine% -s=%Resize%"
