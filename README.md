@@ -16,5 +16,6 @@ a multimedia encoding tool without gui
     * The 32-bit `fdkaac.exe` should be put in `bin32` folder
     * The 64-bit `fdkaac.exe` should be put in `bin64` folder
 5. (Optional) Check and modify `config.ini`
+    * Check [config.md](config.md) for references.
 6. Drag file(s) to `nogui.bat` and wait until completed. The encoded file should be in the same folder of input file.
     * Multimedia encoding usually takes a long time, so be patient.
