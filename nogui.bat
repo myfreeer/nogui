@@ -72,6 +72,7 @@ if defined Audio_Encode_Channels if "%Audio_Encode_Channels%" neq "0" set "Comma
 
 if defined Encode_Type if "%Encode_Type%"=="Video" set "CommandLine=%CommandLine% -v"
 if defined Encode_Type if "%Encode_Type%"=="Audio" set "CommandLine=%CommandLine% -a"
+
 %CommandLine%
 goto :Next
 

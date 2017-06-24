@@ -1,2 +1,2 @@
 ## bin64 folder
-This folder contains 64-bit `ffmpeg.exe` and `fdkaac.exe`.
+This folder should contain 64-bit `ffmpeg.exe` and `fdkaac.exe`.

@@ -191,17 +191,14 @@ encode_audio_vorbis() {
 }
 
 encode_audio_fdk() {
-  if [[ "$1" == "2" ]] || [[ "$4" == "29" ]] ; then
+  if [[ "${ACHANNELS}" == "2" ]] || [[ "${APROFILE}" == "29" ]] ; then
     local ac="-ac 2"
-    if [[ "$1" == "2" ]] ; then shift ; fi
   fi
-  local input_file="$1"
-  local output_file="$2"
+  local input_file="${INPUT}"
+  local output_file="${OUTPUT}"
   output_file="${output_file:-tmp/$(get_filename \"${input_file}\")_fdkaac.m4a}"
-  local quality="$3"
-  quality="${quality:-3}"
-  local profile="$4"
-  profile="${profile:-2}"
+  local quality="${AQUALITY:-3}"
+  local profile="${APROFILE:-2}"
   # Profile (audio object type)
   #  2: MPEG-4 AAC LC (default)
   #  5: MPEG-4 HE-AAC (SBR)
@@ -339,7 +336,7 @@ encode_video_fdk() {
   local cmdline="$(create_cmdline)"
   $FFMPEG -v error  -i "${input_file}" -vn -sn -dn $ac -c:a pcm_f32le -f caf - |\
     $FDKAAC - -p "${APROFILE:-2}" -m "${AQUALITY:-3}" -I -f 2 -S -C -o - |\
-    $FFMPEG -i "${input_file}" -i - -map 1:a -c:a copy -map 0:v $cmdline "${output_file}"
+    $FFMPEG -i "${input_file}" -i - -map 1:a -c:a copy -map 0:v? $cmdline "${output_file}"
   return $?
 }
 # encode_video_fdk "${INPUT}" 1.mkv
