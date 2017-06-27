@@ -86,7 +86,7 @@ do
 done
 
 # Init
-FFMPEG="${BINARY_DIR}/ffmpeg -hide_banner"
+FFMPEG="${BINARY_DIR}/ffmpeg -hide_banner -sws_flags spline"
 FDKAAC="${BINARY_DIR}/fdkaac"
 rm -rf tmp
 sleep 0.01
