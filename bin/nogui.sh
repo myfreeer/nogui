@@ -181,7 +181,7 @@ encode_audio_vorbis() {
   fi
   local input_file="$1"
   local output_file="$2"
-  output_file="${output_file:-tmp/$(get_filename \"${input_file}\")_vorbis.mka}"
+  output_file="${output_file:-tmp/$(get_filename "${input_file}")_vorbis.mka}"
   local quality="$3"
   quality="${quality:-4}"
   if [[ "$4" == "-b:a k" ]] ; then return 1 ; fi
@@ -196,7 +196,7 @@ encode_audio_fdk() {
   fi
   local input_file="${INPUT}"
   local output_file="${OUTPUT}"
-  output_file="${output_file:-tmp/$(get_filename \"${input_file}\")_fdkaac.m4a}"
+  output_file="${output_file:-tmp/$(get_filename "${input_file}")_fdkaac.m4a}"
   local quality="${AQUALITY:-3}"
   local profile="${APROFILE:-2}"
   # Profile (audio object type)
@@ -220,7 +220,7 @@ encode_audio_bitrate() {
   fi
   local input_file="$1"
   local output_file="$2"
-  output_file="${output_file:-tmp/$(get_filename \"${input_file}\")_bitrate.mka}"
+  output_file="${output_file:-tmp/$(get_filename "${input_file}")_bitrate.mka}"
   local codec="$3"
   codec="${codec:-libopus}"
   local bitrate="-b:a $4k"
@@ -235,7 +235,7 @@ encode_opus_by_quality() {
     local ac="2"
   fi
   local input_file="${INPUT}"
-  local input_filename="$(get_filename \"${input_file}\")"
+  local input_filename="$(get_filename "${input_file}")"
   local tmp_file="tmp/${input_filename}_quality_tmp.mka"
   local output_file="${OUTPUT:-tmp/${input_filename}_opus.mka}"
   local quality="${AQUALITY:-4}"
@@ -308,7 +308,7 @@ encode_video_opus() {
     af="-af aformat=channel_layouts=7.1|6.1|5.1|stereo|mono" # workaround for opus
   fi
   local input_file="$1"
-  local input_filename="$(get_filename \"${input_file}\")"
+  local input_filename="$(get_filename "${input_file}")"
   local output_file="$2"
   local tmp_file="tmp/${input_filename}_quality_tmp.mka"
   local bitrate
@@ -331,7 +331,7 @@ encode_video_fdk() {
     local ac="-ac 2"
   fi
   local input_file="$1"
-  local input_filename="$(get_filename \"${input_file}\")"
+  local input_filename="$(get_filename "${input_file}")"
   local output_file="$2"
   local cmdline="$(create_cmdline)"
   $FFMPEG -v error  -i "${input_file}" -vn -sn -dn $ac -c:a pcm_f32le -f caf - |\
