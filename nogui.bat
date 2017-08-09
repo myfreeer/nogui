@@ -36,11 +36,11 @@ call bin\timer_begin.bat
 if exist %systemroot%\syswow64\cmd.exe goto :x64
 
 :x86
-set "Bin=%~dp0bin32"
+set "Bin=bin32"
 goto :Main
 
 :x64
-set "Bin=%~dp0bin64"
+set "Bin=bin64"
 goto :Main
 
 :Main
