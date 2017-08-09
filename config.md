@@ -10,8 +10,10 @@ Type of destination file. Wrong `Encode_Type` may lead to wrong result.
 ### `Log_File`
 If set, nogui would log the encoding process to specified file.
 
+**Note:** If `Log_File` is set, encoding process **can't be paused** via `Pause/Break` key or `Ctrl+S` hotkey.
+
 ### `Output_File_Format`
-The extension of output file. Recommanded to use `mkv` for videos, and `mka` for audios.
+The extension of output file. Recommended to use `mkv` for videos, and `mka` for audios.
 
 ### `Nogui_Preset`
 A set of options and values. **Any** other value would override this.
@@ -54,11 +56,11 @@ Quality for video encoding, the `crf` value passed to ffmpeg.
 Preset for video encoding, passed to ffmpeg as `preset:v` directly.
 
 * Default Value: `slow`
-* Possible Values (**Bold** ones are recommanded):
+* Possible Values (**Bold** ones are recommended):
     * `ultrafast`
     * `superfast`
     * `veryfast`
-    * **`faster`**
+    * `faster`
     * `fast`
     * **`medium`**
     * **`slow`**
