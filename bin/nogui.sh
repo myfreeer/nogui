@@ -350,9 +350,9 @@ main() {
     fi #Audio_Encoder
   else # $TYPE=AUDIO
     if [[ "${Audio_Encoder}" == "opus" ]] || [[ "${Audio_Encoder}" == "libopus" ]] ; then
-      encode_opus_by_quality "${ACHANNELS}" "${INPUT}" "${OUTPUT}" "${AQUALITY}"
+      encode_opus_by_quality $ACHANNELS "${INPUT}" "${OUTPUT}" "${AQUALITY}"
     else #fdk
-      encode_audio_fdk "${ACHANNELS}" "${INPUT}" "${OUTPUT}" "${AQUALITY:-3}" "${APROFILE}"
+      encode_audio_fdk $ACHANNELS "${INPUT}" "${OUTPUT}" "${AQUALITY:-3}" "${APROFILE}"
     fi #Audio_Encoder
   fi #TYPE
 }
