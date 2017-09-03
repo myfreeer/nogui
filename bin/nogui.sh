@@ -317,9 +317,9 @@ encode_video_opus() {
   bitrate=$(($bitrate*3/4))
   local cmdline="$(create_cmdline)"
   if [[ ! "${af}" == "" ]] ; then
-    cmdline="${cmdline}${af} "
+    cmdline="${cmdline} -map 0:a:0 ${af}"
   fi
-  cmdline="${cmdline}-c:a lib${Audio_Encoder} -b:a ${bitrate}k "
+  cmdline="${cmdline} -c:a lib${Audio_Encoder} -b:a ${bitrate}k "
   $FFMPEG -i "${input_file}" $cmdline -c:s copy "${output_file}"
   if [[ $? == 0 ]] ; then rm -f "${tmp_file}" ; fi
   return $?
@@ -334,7 +334,7 @@ encode_video_fdk() {
   local input_filename="$(get_filename "${input_file}")"
   local output_file="$2"
   local cmdline="$(create_cmdline)"
-  $FFMPEG -v error  -i "${input_file}" -vn -sn -dn $ac -c:a pcm_f32le -f caf - |\
+  $FFMPEG -v error -i "${input_file}" -vn -sn -dn -map 0:a:0 $ac -c:a pcm_f32le -f caf - |\
     $FDKAAC - -p "${APROFILE:-2}" -m "${AQUALITY:-3}" -I -f 2 -S -C -o - |\
     $FFMPEG -i "${input_file}" -i - -map 0:v? $cmdline -map 1:a -c:a copy -map 0:s? -c:s copy "${output_file}"
   return $?
