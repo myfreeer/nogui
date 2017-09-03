@@ -37,6 +37,7 @@ A set of options and values. **Any** other value would override this.
         * `Audio_Encode_Quality`=`3`
         * `Audio_Encode_Profile`=`29`
         * `Audio_Encode_Channels`=`2`
+        * `Resize`=`sd`
 
 ## Video
 ### `Video_Encode_Codec`
