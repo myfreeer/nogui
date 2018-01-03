@@ -44,15 +44,19 @@ set "Bin=bin64"
 goto :Main
 
 :Main
+set busybox="%Bin%\busybox.exe"
+if not exist "%busybox%" if exist "%Bin%\busybox64.exe" set busybox="%Bin%\busybox64.exe"
+if not exist "%busybox%" if exist "%Bin%\busybox32.exe" set busybox="%Bin%\busybox32.exe"
+if not exist "%busybox%" if exist "%Bin%\busybox86.exe" set busybox="%Bin%\busybox86.exe"
 if not exist "%Bin%\ffmpeg.exe" call :Error "%Bin%\ffmpeg.exe"
 if "%Audio_Encode_Codec%"=="fdkaac" if not exist "%Bin%\fdkaac.exe" call :Error "%Bin%\fdkaac.exe"
-if not exist "bin\busybox.exe" call :Error "bin\busybox.exe"
+if not exist "%busybox%" call :Error "%busybox%"
 if not exist "bin\nogui.sh" call :Error "bin\nogui.sh"
 if defined Error if [%Error%]==[1] goto :End
 set /a args+=1
 title %lc_Encoding% %args% %lc_Encoding_of% %argC% - Nogui
 
-set CommandLine=bin\busybox.exe sh bin\nogui.sh -b="%Bin%" -i="%~1" -o="%~dpn1_encoded.%Output_File_Format%"
+set CommandLine="%busybox%" sh bin\nogui.sh -b="%Bin%" -i="%~1" -o="%~dpn1_encoded.%Output_File_Format%"
 if defined Video_Encode_Codec set "CommandLine=%CommandLine% -ve=%Video_Encode_Codec%"
 if defined Video_Encode_Quality set "CommandLine=%CommandLine% -crf=%Video_Encode_Quality%"
 if defined Video_Encode_Preset set "CommandLine=%CommandLine% -vp=%Video_Encode_Preset%"
