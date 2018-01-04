@@ -11,11 +11,12 @@ set Output_File_Format=mkv
 
 :Import_Config
 set Config_File=config.ini
-set Locale_File=locale\en.ini
+set Locale_File=locale\en-US.ini
+if exist "%Locale_File%" for /f "tokens=* eol=; delims=" %%i in (%Locale_File%) do set "%%i"
 FOR /F "tokens=3" %%a IN ('reg query "HKCU\Control Panel\Desktop" /v PreferredUILanguages ^| find "PreferredUILanguages"') DO set UILanguage=%%a
-if "%UILanguage%"=="zh-CN" set Locale_File=locale\zh.ini
-if exist %Config_File% for /f "tokens=* eol=; delims=" %%i in (%Config_File%) do set "%%i"
-if exist %Locale_File% for /f "tokens=* eol=; delims=" %%i in (%Locale_File%) do set "%%i"
+if exist "locale\%UILanguage%.ini" set "Locale_File=locale\%UILanguage%.ini"
+if exist "%Locale_File%" for /f "tokens=* eol=; delims=" %%i in (%Locale_File%) do set "%%i"
+if exist "%Config_File%" for /f "tokens=* eol=; delims=" %%i in (%Config_File%) do set "%%i"
 
 :Check_Input
 if [%1]==[] goto :Input
