@@ -52,6 +52,8 @@ if not exist "%Bin%\ffmpeg.exe" call :Error "%Bin%\ffmpeg.exe"
 if "%Audio_Encode_Codec%"=="fdkaac" if not exist "%Bin%\fdkaac.exe" call :Error "%Bin%\fdkaac.exe"
 if not exist "%busybox%" call :Error "%busybox%"
 if not exist "bin\nogui.sh" call :Error "bin\nogui.sh"
+if not exist "%Bin%\MediaInfo.exe" set HDR=No
+if not exist "%Bin%\mujs.exe" set HDR=No
 if defined Error if [%Error%]==[1] goto :End
 set /a args+=1
 title %lc_Encoding% %args% %lc_Encoding_of% %argC% - Nogui
