@@ -19,7 +19,7 @@ a multimedia encoding tool without gui
     * [fdkaac_autobuild](https://github.com/nu774/fdkaac_autobuild) can compile `fdkaac` easily on windows.
     * The 32-bit `fdkaac.exe` should be put in `bin32` folder.
     * The 64-bit `fdkaac.exe` should be put in `bin64` folder.
-5. (Optional) Download or compile **CIL** version of [MediaInfo](https://mediaarea.net/en/MediaInfo/Download/Windows) if needed
+5. (Optional) Download or compile **CLI** version of [MediaInfo](https://mediaarea.net/en/MediaInfo/Download/Windows) if needed
     * Both `MediaInfo` and `mujs` are required for HDR metadata parsing.
     * The 32-bit `MediaInfo.exe` should be put in `bin32` folder.
     * The 64-bit `MediaInfo.exe` should be put in `bin64` folder.
