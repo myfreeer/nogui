@@ -12,6 +12,10 @@ If set, nogui would log the encoding process to specified file.
 
 **Note:** If `Log_File` is set, encoding process **can't be paused** via `Pause/Break` key or `Ctrl+S` hotkey.
 
+### `Locale`
+If set, nogui would try to use the locale specified here instead of detecting it from registry.
+Nogui would fallback to english (en-US) if the specified locale does not exist in `locale` folder.
+
 ### `Output_File_Format`
 The extension of output file. Recommended to use `mkv` for videos, and `mka` for audios.
 
