@@ -104,6 +104,15 @@ Apply a `scale` filter to video.
 Pixel format of video. Directly passed to ffmpeg as `pix_fmt`.
 You'll need a custom built ffmpeg for encoding high-bitdepth video.
 
+### `HDR`
+Encode HDR video (ignored if `Video_Encode_Codec` not equals `x265`).
+Both `MediaInfo` and `mujs` are required for HDR metadata parsing.
+
+* Possible Values
+    * `No`: Disable (Default)
+    * `Auto`: Detect if source video is HDR and encode HDR video from HDR source
+    * `Force`: Encode video as HDR whatever source (NOT recommended)
+
 ## Audio
 ### `Audio_Encode_Codec`
 The codec for audio encoding.

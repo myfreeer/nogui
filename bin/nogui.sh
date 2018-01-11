@@ -55,6 +55,10 @@ do
       PIXFMT="${i#*=}"
       shift # past argument=value
     ;;
+    --hdr=*)
+      HDR="${i#*=}"
+      shift # past argument=value
+    ;;
     -ae=*|--aencoder=*)
       Audio_Encoder="${i#*=}"
       shift # past argument=value
@@ -88,6 +92,8 @@ done
 # Init
 FFMPEG="${BINARY_DIR}/ffmpeg -hide_banner -sws_flags spline"
 FDKAAC="${BINARY_DIR}/fdkaac"
+MEDIAINFO="${BINARY_DIR}/MediaInfo"
+MUJS="${BINARY_DIR}/mujs"
 rm -rf tmp
 sleep 0.01
 mkdir -p tmp
@@ -95,6 +101,7 @@ mkdir -p tmp
 # Default Values
 # PRESET="${PRESET:-hq}"
 TYPE="${TYPE:-VIDEO}"
+HDR="${HDR:-No}"
 
 # Prase Preset
 case "${PRESET}" in
@@ -284,6 +291,7 @@ create_vf() {
 create_cmdline() {
   local vf=$(create_vf)
   local cmdline=" "
+  local my_vparam="${VPARAM}"
   if [[ ! "${vf}" == "" ]] ; then
     cmdline="${cmdline}${vf} "
   fi
@@ -294,8 +302,20 @@ create_cmdline() {
   if [[ ! "${PIXFMT}" == "" ]] ; then
     cmdline="${cmdline}-pix_fmt ${PIXFMT} "
   fi
-  if [[ ! "${VPARAM}" == "" ]] ; then
-    cmdline="${cmdline}-${Video_Encoder}-params ${VPARAM} "
+  if [[ "${HDR}" == "Auto" ]] || [[ "${HDR}" == "Force" ]] ; then
+    $MEDIAINFO --Output="Video;%colour_range%\n%transfer_characteristics%\n%colour_primaries%\n%matrix_coefficients%\n%MasteringDisplay_ColorPrimaries%\n%MasteringDisplay_Luminance%\n%MaxCLL%\n%MaxFALL%\n%ChromaSubsampling_Position%" "${INPUT}" > tmp/hdrinfo.txt
+    hdrinfo=$($MUJS bin/parseHdrInfo.js)
+    if [[ ! "${hdrinfo}" == "" ]] ; then
+      hdrinfo="hdr=1:hdr-opt=1:${hdrinfo}"
+    elif [[ "${HDR}" == "Force" ]] ; then
+      hdrinfo="hdr=1:hdr-opt=1"
+    fi
+    if [[ "${Video_Encoder}" == "x265" ]] && [[ ! "${hdrinfo}" == "" ]] ; then
+      my_vparam="\"${hdrinfo}:${my_vparam}\""
+    fi
+  fi
+  if [[ ! "${my_vparam}" == "" ]] ; then
+    cmdline="${cmdline}-${Video_Encoder}-params ${my_vparam} "
   fi
   echo "${cmdline}"
 }
@@ -320,7 +340,7 @@ encode_video_opus() {
     cmdline="${cmdline} -map 0:a:0 ${af}"
   fi
   cmdline="${cmdline} -c:a lib${Audio_Encoder} -b:a ${bitrate}k "
-  $FFMPEG -i "${input_file}" $cmdline -c:s copy "${output_file}"
+  $FFMPEG -i "${input_file}" -map 0:v:? $cmdline -c:s copy "${output_file}"
   if [[ $? == 0 ]] ; then rm -f "${tmp_file}" ; fi
   return $?
 }
