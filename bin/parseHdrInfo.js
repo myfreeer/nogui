@@ -98,7 +98,7 @@ function parseHdrInfo(info, type) {
         try {
             var masteringDisplay_Luminance = infoArr[5].split(',').map(function (e) {
                 return 10000 * Number(e.match(/[\d\.]+/));
-            }).sort().reverse().join(',');
+            }).sort().join(',');
             if (infoArr[4] === 'Display P3')
                 opts['master-display'] = 'G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(' + masteringDisplay_Luminance + ')';
             else if (infoArr[4] === 'BT.2020')
@@ -115,7 +115,7 @@ function parseHdrInfo(info, type) {
         var maxCLL = Number(infoArr[6].match(/[\d\.]+/)),
             maxFALL = Number(infoArr[7].match(/[\d\.]+/));
         if (maxCLL && maxFALL)
-            opts['max-cll'] = '"' + maxCLL + ',' + maxFALL + '"';
+            opts['max-cll'] = maxCLL + ',' + maxFALL;
     }
     if (infoArr[8]) { //chromaloc
         var chromaloc;
