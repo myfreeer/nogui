@@ -16,6 +16,13 @@ If set, nogui would log the encoding process to specified file.
 If set, nogui would try to use the locale specified here instead of detecting it from registry.
 Nogui would fallback to english (en-US) if the specified locale does not exist in `locale` folder.
 
+* Default: Not set (RECOMMANDED)
+
+### `Output_Path`
+If set, nogui would write output file to the path specified here instead of the path of input file.
+
+* Default: Not set (RECOMMANDED)
+
 ### `Output_File_Format`
 The extension of output file. Recommended to use `mkv` for videos, and `mka` for audios.
 
@@ -93,6 +100,8 @@ Use ffmpeg's `cropdetect` filter to detect black edges in time-range `10:00` to 
 ### `Crop`
 Manally apply a `crop` filter as `crop=value` to video.
 This would override value of `Auto_Crop` if set.
+
+Notice: the `crop` filter will be put before the `scale` filter.
 
 ### `Resize`
 Apply a `scale` filter to video.

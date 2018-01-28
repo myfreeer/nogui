@@ -274,11 +274,12 @@ crop_detect() {
 create_vf() {
   local vf
   if [[ "${CROP}" == "AUTO" ]]; then
+    (>&2 echo "Running crop-detect...")
     CROP=$(crop_detect "${INPUT}")
   fi
   if [[ ! "${CROP}" == "" ]] ; then
     if [[ ! "${SCALE}" == "" ]] ; then
-      vf="-vf ${SCALE},${CROP}"
+      vf="-vf ${CROP},${SCALE}"
     else
       vf="-vf ${SCALE}"
     fi
@@ -322,8 +323,10 @@ create_cmdline() {
 
 encode_video_opus() {
   local af
+  local ac
   if [[ "${ACHANNELS}" == "2" ]] ; then
-    af="-af pan=stereo| FL=FL+0.707107FC+0.707107BL+0.707107SL | FR=FR+0.707107FC+0.707107BR+0.707107SR"
+    af="-af pan=stereo|FL=FL+0.707107FC+0.707107BL+0.707107SL|FR=FR+0.707107FC+0.707107BR+0.707107SR"
+    ac=2
   else
     af="-af aformat=channel_layouts=7.1|6.1|5.1|stereo|mono" # workaround for opus
   fi

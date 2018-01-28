@@ -59,7 +59,14 @@ if defined Error if [%Error%]==[1] goto :End
 set /a args+=1
 title %lc_Encoding% %args% %lc_Encoding_of% %argC% - Nogui
 
-set CommandLine="%busybox%" sh bin\nogui.sh -b="%Bin%" -i="%~1" -o="%~dpn1_encoded.%Output_File_Format%"
+set "Output_File=%~dpn1_encoded.%Output_File_Format%"
+if defined Output_Path if "Output_Path" neq "" (
+    set "Output_File=%Output_Path%\%~n1_encoded.%Output_File_Format%"
+    if not exist "%Output_Path%" md "%Output_Path%"
+)
+if exist "%Output_File%" call :MoveFileRandom "%Output_File%"
+
+set CommandLine="%busybox%" sh bin\nogui.sh -b="%Bin%" -i="%~1" -o="%Output_File%"
 if defined Video_Encode_Codec set "CommandLine=%CommandLine% -ve=%Video_Encode_Codec%"
 if defined Video_Encode_Quality set "CommandLine=%CommandLine% -crf=%Video_Encode_Quality%"
 if defined Video_Encode_Preset set "CommandLine=%CommandLine% -vp=%Video_Encode_Preset%"
@@ -93,6 +100,10 @@ pause
 call bin\timer_end.bat
 pause
 exit /B
+
+:MoveFileRandom
+move "%~1" "%~dpn1_%RANDOM%.%~x1"
+exit /b
 
 :Error
 set Error=1
