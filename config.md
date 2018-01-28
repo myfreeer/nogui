@@ -39,6 +39,13 @@ A set of options and values. **Any** other value would override this.
         * `Video_Encode_Custom_Params`=`aq-mode=2:weightb=1:rc-lookahead=120:keyint=720:min-keyint=1`
         * `Video_Encode_Quality`=`18`
         * `Audio_Encode_Quality`=`4`
+    * `x265_fast`
+        * `Video_Encode_Codec`=`x265`
+        * `Audio_Encode_Codec`=`opus`
+        * `Video_Encode_Preset`=`fast`
+        * `Video_Encode_Custom_Params`=`aq-mode=2:weightb=1:merange=16:keyint=720:min-keyint=1`
+        * `Video_Encode_Quality`=`21`
+        * `Audio_Encode_Quality`=`3`
     * `sd`
         * `Video_Encode_Codec`=`x264`
         * `Audio_Encode_Codec`=`fdkaac`

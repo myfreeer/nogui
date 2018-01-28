@@ -114,6 +114,14 @@ case "${PRESET}" in
     CRF="${CRF:-18}"
     AQUALITY="${AQUALITY:-4}"
   ;;
+  x265_fast)
+    Video_Encoder="${Video_Encoder:-x265}"
+    Audio_Encoder="${Audio_Encoder:-opus}"
+    VPRESET="${VPRESET:-fast}"
+    VPARAM="${VPARAM:-aq-mode=2:weightb=1:merange=16:keyint=720:min-keyint=1}"
+    CRF="${CRF:-21}"
+    AQUALITY="${AQUALITY:-2}"
+  ;;
   sd|minisd)
     Video_Encoder="${Video_Encoder:-x264}"
     Audio_Encoder="${Audio_Encoder:-fdkaac}"
