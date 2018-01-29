@@ -200,7 +200,7 @@ encode_audio_vorbis() {
   local quality="$3"
   quality="${quality:-4}"
   if [[ "$4" == "-b:a k" ]] ; then return 1 ; fi
-  $FFMPEG -v error -i "${input_file}" -vn -sn -dn $ac -c:a pcm_f32le -f wav - |\
+  $FFMPEG -v error -i "${input_file}" -t 600 -vn -sn -dn $ac -c:a pcm_f32le -f wav - |\
   $FFMPEG -i - -vn -sn -dn -c:a libvorbis -q:a "${quality}" "${output_file}"
   return $?
 }
