@@ -26,6 +26,8 @@ If set, nogui would write output file to the path specified here instead of the 
 ### `Output_File_Format`
 The extension of output file. Recommended to use `mkv` for videos, and `mka` for audios.
 
+* Default: `mkv`
+
 ### `Nogui_Preset`
 A set of options and values. **Any** other value would override this.
 
@@ -57,6 +59,12 @@ A set of options and values. **Any** other value would override this.
         * `Audio_Encode_Channels`=`2`
         * `Resize`=`sd`
 
+### `FFmpeg_Hwaccel`
+Use hardware acceleration to decode the matching stream(s), passed to ffmpeg as `hwaccel` directly.
+Run `ffmpeg -hwaccels` for available values for your current ffmpeg build.
+
+* Default: Not set.
+
 ## Video
 ### `Video_Encode_Codec`
 The codec for video encoding.
@@ -80,7 +88,7 @@ Preset for video encoding, passed to ffmpeg as `preset:v` directly.
     * `superfast`
     * `veryfast`
     * `faster`
-    * `fast`
+    * **`fast`**
     * **`medium`**
     * **`slow`**
     * **`slower`**
@@ -149,6 +157,7 @@ Quality for audio encoding.
 
 ### `Audio_Encode_Profile`
 Audio encoding Profile for `fdkaac`.
+
 * Possible Values
     * `2`: MPEG-4 AAC LC (Default)
     * `5`: MPEG-4 HE-AAC (SBR)

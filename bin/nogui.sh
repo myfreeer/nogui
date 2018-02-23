@@ -27,6 +27,10 @@ do
       scale="${i#*=}"
       shift # past argument=value
     ;;
+    --hwaccel=*)
+      HWACCEL="${i#*=}"
+      shift # past argument=value
+    ;;
     --autocrop)
       CROP="AUTO"
       shift # past argument with no value
@@ -97,6 +101,11 @@ MUJS="${BINARY_DIR}/mujs"
 rm -rf tmp
 sleep 0.01
 mkdir -p tmp
+
+# Hwaccel decoding for ffmpeg
+if [[ ! "${HWACCEL}" == "" ]] ; then
+  FFMPEG="${FFMPEG} -hwaccel ${HWACCEL}"
+fi
 
 # Default Values
 # PRESET="${PRESET:-hq}"

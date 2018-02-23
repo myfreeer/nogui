@@ -73,6 +73,7 @@ if defined Video_Encode_Preset set "CommandLine=%CommandLine% -vp=%Video_Encode_
 if defined Audio_Encode_Codec set "CommandLine=%CommandLine% -ae=%Audio_Encode_Codec%"
 if defined Log_File set "CommandLine=%CommandLine% -l=%Log_File%"
 if defined Nogui_Preset set "CommandLine=%CommandLine% -p=%Nogui_Preset%"
+if defined FFmpeg_Hwaccel set "CommandLine=%CommandLine% --hwaccel=%FFmpeg_Hwaccel%"
 if defined Resize if "%Resize%" neq "0" set "CommandLine=%CommandLine% -s=%Resize%"
 if defined Auto_Crop if "%Auto_Crop%" neq "0" set "CommandLine=%CommandLine% --autocrop"
 if defined Video_Encode_Custom_Params set "CommandLine=%CommandLine% -va=%Video_Encode_Custom_Params%"
