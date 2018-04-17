@@ -10,9 +10,9 @@ a multimedia encoding tool without gui
         * You may get latest 64-bit binary from [frippery's website](https://frippery.org/files/busybox/busybox64.exe)
 3. Download or compile [ffmpeg](https://ffmpeg.org/).
     * The 32-bit `ffmpeg.exe` should be put in `bin32` folder.
-        * You may get latest 32-bit binary from [Zeranoe's website](https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-latest-win32-static.7z)
+        * You may get latest 32-bit binary from [Zeranoe's website](https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-latest-win32-static.zip)
     * The 64-bit `ffmpeg.exe` should be put in `bin64` folder.
-        * You may get latest 64-bit binary from [Zeranoe's website](https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.7z)
+        * You may get latest 64-bit binary from [Zeranoe's website](https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.zip)
 4. (Optional) Compile [fdkaac](https://github.com/nu774/fdkaac) if needed
     * `fdkaac` enables high-quality aac audio encoding for better compibility with legacy devices.
     * Fraunhofer's [license](https://android.googlesource.com/platform/external/aac/+/master/NOTICE) prevented a binary being released.
