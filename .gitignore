@@ -7,3 +7,5 @@ tmp/*
 *.aac
 *.ac3
 *.log
+*.7z
+config.ini
