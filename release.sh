@@ -68,7 +68,7 @@ if [[ $ffmpeg_date_remote_32 > $ffmpeg_date_32 ]]; then
     update_ffmpeg 32
 fi
 
-echo Fetching busybox info...
+echo Fetching remote busybox info...
 busybox_info_url='https://frippery.org/busybox/'
 busybox_bin_url='https://frippery.org/files/busybox/'
 busybox_version_64="$("./bin64/busybox64.exe" | head -1 | grep -ioP '\d+-g[\da-z]+' | grep -ioP '\d+' | head -1)"
@@ -94,6 +94,43 @@ echo Downloading mujs if not exist...
 mujs_url='https://ci.appveyor.com/api/projects/myfreeer/mujs/artifacts/'
 [[ ! -e bin64/mujs.exe ]] && fetch "${mujs_url}mujs_x64.7z" mujs_x64.7z && 7z x mujs_x64.7z && mv -f mujs.exe bin64/ && rm -f mujs_x64.7z
 [[ ! -e bin32/mujs.exe ]] && fetch "${mujs_url}mujs_x86.7z" mujs_x86.7z && 7z x mujs_x86.7z && mv -f mujs.exe bin32/ && rm -f mujs_x86.7z
+
+echo Fetching remote MediaInfo info...
+mediainfo_url='https://mediaarea.net/download/binary/mediainfo'
+
+update_mediainfo() {
+    local b='64'
+    local v='x64'
+    if [[ "$1" = "32" ]]; then
+       b='32'
+       v='i386'
+    fi
+    local filename="MediaInfo_CLI_${mediainfo_version_remote}_Windows_${v}.zip"
+    local url="${mediainfo_url}/${mediainfo_version_remote}/${filename}"
+    local path="$(echo "${filename}" | sed 's/\.zip$//')"
+    mkdir -p "${path}"
+    cd "${path}"
+    echo Downloading "${filename}" ...
+    fetch "${url}" "${filename}"
+    echo Unpacking "${filename}" ...
+    unzip -qo "${filename}"
+    echo Updating MediaInfo "${b}-bit" ...
+    mv -f "MediaInfo.exe" "../bin${b}/"
+    cd ..
+    echo Cleaning up MediaInfo "${b}-bit" files...
+    rm -rf "./${path}"
+}
+
+mediainfo_version_remote="$(curl -k -s -L --retry 5 --retry-connrefused "${mediainfo_url}" | grep -ioP '(\d+\.)+\d+' | uniq | sort -uVr | head -1)"
+mediainfo_version_32="$(bin32/MediaInfo --Version  | grep -ioP '(\d+\.)+\d+' | head -1)"
+mediainfo_version_64="$(bin64/MediaInfo --Version  | grep -ioP '(\d+\.)+\d+' | head -1)"
+
+if [[ $mediainfo_version_remote > $mediainfo_version_64 ]]; then
+    update_mediainfo 64
+fi
+if [[ $mediainfo_version_remote > $mediainfo_version_32 ]]; then
+    update_mediainfo 32
+fi
 
 echo Packaging nogui...
 nogui_date="$(git log -n1 --date=short --pretty=format:'%ad' | sed  's/-//g')"
