@@ -1,7 +1,14 @@
 # nogui
 a multimedia encoding tool without gui
 
-## Usage
+## Usage (Release)
+1. Download latest [release package](https://github.com/myfreeer/nogui/releases/latest) and extract it to a folder containing no space or non-ascii chars.
+2. (Optional) Check and modify `config.ini`
+    * Check [config.md](config.md) for references.
+3. Drag file(s) to `nogui.bat` and wait until completed. The encoded file should be in the same folder of input file.
+    * Multimedia encoding usually takes a long time, so be patient.
+    
+## Usage (Manally)
 1. Download [this project](https://github.com/myfreeer/nogui/archive/master.zip) as archive and extract it to a folder containing no space or non-ascii chars.
 2. Download or compile [busybox-w32](https://frippery.org/busybox/) and put `busybox.exe` in `bin` folder.
     * The 32-bit `busybox.exe` should be put in `bin32` folder.
