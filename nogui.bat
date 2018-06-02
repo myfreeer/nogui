@@ -65,7 +65,6 @@ if defined Output_Path if "Output_Path" neq "" (
     if not exist "%Output_Path%" md "%Output_Path%"
 )
 if exist "%Output_File%" call :MoveFileRandom "%Output_File%"
-
 set CommandLine="%busybox%" sh bin\nogui.sh -b="%Bin%" -i="%~1" -o="%Output_File%"
 if defined Video_Encode_Codec set "CommandLine=%CommandLine% -ve=%Video_Encode_Codec%"
 if defined Video_Encode_Quality set "CommandLine=%CommandLine% -crf=%Video_Encode_Quality%"
@@ -74,13 +73,13 @@ if defined Audio_Encode_Codec set "CommandLine=%CommandLine% -ae=%Audio_Encode_C
 if defined Log_File set "CommandLine=%CommandLine% -l=%Log_File%"
 if defined Nogui_Preset set "CommandLine=%CommandLine% -p=%Nogui_Preset%"
 if defined FFmpeg_Hwaccel set "CommandLine=%CommandLine% --hwaccel=%FFmpeg_Hwaccel%"
-if defined Resize if "%Resize%" neq "0" set "CommandLine=%CommandLine% -s=%Resize%"
+if defined Resize set "CommandLine=%CommandLine% -s=%Resize%"
 if defined Auto_Crop if "%Auto_Crop%" neq "0" set "CommandLine=%CommandLine% --autocrop"
 if defined Video_Encode_Custom_Params set "CommandLine=%CommandLine% -va=%Video_Encode_Custom_Params%"
 if defined Pixel_Format set "CommandLine=%CommandLine% --pixfmt=%Pixel_Format%"
 if defined HDR set "CommandLine=%CommandLine% --hdr=%HDR%"
 if defined Audio_Encode_Profile set "CommandLine=%CommandLine% -ap=%Audio_Encode_Profile%"
-if defined Audio_Encode_Channels if "%Audio_Encode_Channels%" neq "0" set "CommandLine=%CommandLine% -ac=%Audio_Encode_Channels%"
+if defined Audio_Encode_Channels set "CommandLine=%CommandLine% -ac=%Audio_Encode_Channels%"
 
 if defined Encode_Type if "%Encode_Type%"=="Video" set "CommandLine=%CommandLine% -v"
 if defined Encode_Type if "%Encode_Type%"=="Audio" set "CommandLine=%CommandLine% -a"

@@ -40,3 +40,10 @@ a multimedia encoding tool without gui
     * Check [config.md](config.md) for references.
 8. Drag file(s) to `nogui.bat` and wait until completed. The encoded file should be in the same folder of input file.
     * Multimedia encoding usually takes a long time, so be patient.
+
+## FAQ
+* How to stop (give up) a encoding session?
+    * Click the `X` button at the top right corner of the console window.
+* How to pause/resume a encoding session?
+    * Pause: Right click the title bar of the console window, choose `Edit` -> `Mark` to pause.
+    * Resume: Right click inside the paused console window to resume.
