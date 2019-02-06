@@ -1,4 +1,5 @@
-#!bash
+#!/bin/bash
+
 # https://stackoverflow.com/a/14203146
 for i in "$@"
 do
@@ -135,6 +136,7 @@ case "${PRESET}" in
     Video_Encoder="${Video_Encoder:-x264}"
     Audio_Encoder="${Audio_Encoder:-fdkaac}"
     VPRESET="${VPRESET:-veryslow}"
+    PIXFMT="${PIXFMT:-yuv420p}"
     VPARAM="${VPARAM:-bframes=16:weightb=1:keyint=720:min-keyint=1}"
     CRF="${CRF:-21}"
     AQUALITY="${AQUALITY:-3}"
@@ -196,6 +198,12 @@ get_last_bitrate() {
   local input_file="$1"
   $FFMPEG -i "${input_file}" 2>&1 | awk '/bitrate: *[0-9]+ *kb\/s/ { print $(NF-1) }'
   return $?
+}
+
+check_if_audio_exists() {
+  if ! $FFMPEG -i "${INPUT}" 2>&1 | grep -qi 'Audio' ;then
+    Audio_Encoder="none"
+  fi
 }
 
 encode_audio_vorbis() {
@@ -374,26 +382,67 @@ encode_video_fdk() {
   local input_filename="$(get_filename "${input_file}")"
   local output_file="$2"
   local cmdline="$(create_cmdline)"
-  $FFMPEG -v error -i "${input_file}" -vn -sn -dn -map 0:a:0 $ac -c:a pcm_f32le -f caf - |\
+  $FFMPEG -v error -i "${input_file}" -vn -sn -dn -map 0:a:0? $ac -c:a pcm_f32le -f caf - |\
     $FDKAAC - -p "${APROFILE:-2}" -m "${AQUALITY:-3}" -I -f 2 -S -C -o - |\
-    $FFMPEG -i "${input_file}" -i - -map 0:v? $cmdline -map 1:a -c:a copy -map 0:s? -c:s copy "${output_file}"
+    $FFMPEG -i "${input_file}" -i - -map 0:v? $cmdline -map 1:a? -c:a copy -map 0:s? -c:s copy "${output_file}"
   return $?
 }
 # encode_video_fdk "${INPUT}" 1.mkv
 
+encode_video_without_audio() {
+  local input_file="$1"
+  local input_filename="$(get_filename "${input_file}")"
+  local output_file="$2"
+  local cmdline="$(create_cmdline)"
+  $FFMPEG -i "${input_file}" $cmdline -an -c:s copy "${output_file}"
+}
+
+encode_video_copy_audio() {
+  local input_file="$1"
+  local input_filename="$(get_filename "${input_file}")"
+  local output_file="$2"
+  local cmdline="$(create_cmdline)"
+  $FFMPEG -i "${input_file}" $cmdline -c:a copy -c:s copy "${output_file}"
+}
+
 main() {
   if [[ "${TYPE}" == "VIDEO" ]] ; then
-    if [[ "${Audio_Encoder}" == "opus" ]] || [[ "${Audio_Encoder}" == "libopus" ]] ; then
-      encode_video_opus "${INPUT}" "${OUTPUT}"
-    else #fdk
-      encode_video_fdk "${INPUT}" "${OUTPUT}"
-    fi #Audio_Encoder
+    check_if_audio_exists
+    case "${Audio_Encoder}" in
+      "opus"|"libopus")
+        encode_video_opus "${INPUT}" "${OUTPUT}"
+      ;;
+      "fdk"|"fdkaac")
+        encode_video_fdk "${INPUT}" "${OUTPUT}"
+      ;;
+      "none"|"skip"|"disable")
+        encode_video_without_audio "${INPUT}" "${OUTPUT}"
+      ;;
+      "copy"|"keep")
+        encode_video_copy_audio "${INPUT}" "${OUTPUT}"
+      ;;
+      *)
+        echo "Error: Unsupported Audio_Encoder config: ${Audio_Encoder}."
+      ;;
+    esac #Audio_Encoder
   else # $TYPE=AUDIO
-    if [[ "${Audio_Encoder}" == "opus" ]] || [[ "${Audio_Encoder}" == "libopus" ]] ; then
-      encode_opus_by_quality $ACHANNELS "${INPUT}" "${OUTPUT}" "${AQUALITY}"
-    else #fdk
-      encode_audio_fdk $ACHANNELS "${INPUT}" "${OUTPUT}" "${AQUALITY:-3}" "${APROFILE}"
-    fi #Audio_Encoder
+    case "${Audio_Encoder}" in
+      "opus"|"libopus")
+        encode_opus_by_quality $ACHANNELS "${INPUT}" "${OUTPUT}" "${AQUALITY}"
+      ;;
+      "fdk"|"fdkaac")
+        encode_audio_fdk $ACHANNELS "${INPUT}" "${OUTPUT}" "${AQUALITY:-3}" "${APROFILE}"
+      ;;
+      "none"|"skip"|"disable")
+        echo "Error: Disabled audio encoding or doing audio encoding without audio."
+      ;;
+      "copy"|"keep")
+        $FFMPEG -i "${INPUT}" -vn -c:a copy "${OUTPUT}"
+      ;;
+      *)
+        echo "Error: Unsupported Audio_Encoder config: ${Audio_Encoder}."
+      ;;
+    esac #Audio_Encoder
   fi #TYPE
 }
 

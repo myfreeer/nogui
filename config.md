@@ -52,6 +52,7 @@ A set of options and values. **Any** other value would override this.
         * `Video_Encode_Codec`=`x264`
         * `Audio_Encode_Codec`=`fdkaac`
         * `Video_Encode_Preset`=`veryslow`
+        * `Pixel_Format`=`yuv420p`
         * `Video_Encode_Custom_Params`=`bframes=16:weightb=1:keyint=720:min-keyint=1`
         * `Video_Encode_Quality`=`21`
         * `Audio_Encode_Quality`=`3`
@@ -74,7 +75,7 @@ The codec for video encoding.
     * `x264`
 
 ### `Video_Encode_Quality`
-Quality for video encoding, the `crf` value passed to ffmpeg. 
+Quality for video encoding, the `crf` value passed to ffmpeg.
 
 * Possible Values: `0-51`, smaller for better quality anf larger file size.
 * Default Value: `21`
@@ -148,6 +149,8 @@ The codec for audio encoding.
 * Possible Values
     * `opus` (Default)
     * `fdkaac` (Required a `fdkaac.exe` in `bin32` or `bin64`)
+    * `none`: Disable audio encoding in video encoding.
+    * `copy`: Try to remux audio without re-encoding.
 
 ### `Audio_Encode_Quality`
 Quality for audio encoding.
