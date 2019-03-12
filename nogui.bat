@@ -60,7 +60,7 @@ set /a args+=1
 title %lc_Encoding% %args% %lc_Encoding_of% %argC% - Nogui
 
 set "Output_File=%~dpn1_encoded.%Output_File_Format%"
-if defined Output_Path if "Output_Path" neq "" (
+if defined Output_Path if "%Output_Path%" neq "" (
     set "Output_File=%Output_Path%\%~n1_encoded.%Output_File_Format%"
     if not exist "%Output_Path%" md "%Output_Path%"
 )
@@ -70,11 +70,13 @@ if defined Video_Encode_Codec set "CommandLine=%CommandLine% -ve=%Video_Encode_C
 if defined Video_Encode_Quality set "CommandLine=%CommandLine% -crf=%Video_Encode_Quality%"
 if defined Video_Encode_Preset set "CommandLine=%CommandLine% -vp=%Video_Encode_Preset%"
 if defined Audio_Encode_Codec set "CommandLine=%CommandLine% -ae=%Audio_Encode_Codec%"
+if defined Audio_Encode_Quality set "CommandLine=%CommandLine% -aq=%Audio_Encode_Quality%"
 if defined Log_File set "CommandLine=%CommandLine% -l=%Log_File%"
 if defined Nogui_Preset set "CommandLine=%CommandLine% -p=%Nogui_Preset%"
 if defined FFmpeg_Hwaccel set "CommandLine=%CommandLine% --hwaccel=%FFmpeg_Hwaccel%"
 if defined Resize set "CommandLine=%CommandLine% -s=%Resize%"
 if defined Auto_Crop if "%Auto_Crop%" neq "0" set "CommandLine=%CommandLine% --autocrop"
+if defined Crop if "%Crop%" neq "" set "CommandLine=%CommandLine% --crop=%Crop%"
 if defined Video_Encode_Custom_Params set "CommandLine=%CommandLine% -va=%Video_Encode_Custom_Params%"
 if defined Pixel_Format set "CommandLine=%CommandLine% --pixfmt=%Pixel_Format%"
 if defined HDR set "CommandLine=%CommandLine% --hdr=%HDR%"
